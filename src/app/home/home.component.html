@@ -1,0 +1,90 @@
+<div class="jumbotron" *ngIf="!$authService.user">
+  <h1>Kalender-Tool</h1>
+  <p class="lead">Diese Anwendung dient zur Unterstützung der Planung von Studienbezogenen Terminen. Sie können sich
+    einfach mit Ihrem Outlook
+    Account anmelden und im Anschluss die Studientermine automatisch durchnummerieren lassen.</p>
+  <a href="javascript:undefined" class="btn btn-primary btn-large" role="button" (click)="signIn()">Jetzt anmelden!</a>
+</div>
+<div *ngIf="$authService.user">
+  <p>Hallo {{$authService.user.displayName}}</p>
+  <div>
+    <!-- Date picker -->
+    <mat-form-field>
+      <mat-label>Startdatum</mat-label>
+      <input matInput [matDatepicker]="picker1" [formControl]="$startDateFormControl" readonly>
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
+
+    <!-- Date picker -->
+    <mat-form-field>
+      <mat-label>Enddatum</mat-label>
+      <input matInput [matDatepicker]="picker2" [formControl]="$endDateFormControl" readonly>
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
+    <!-- Submit -->
+    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()">Hole Termine</button>
+  </div>
+  <br>
+  <div *ngIf="$eventsWithEqualSubjectArray">
+    <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Daten der
+      vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen.
+    </mat-checkbox>
+    <br>
+    <h1>Ihr Kalender</h1>
+    <table class="table table-borderless">
+      <thead>
+        <th scope="col">
+          <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)">Alle</mat-checkbox>
+        </th>
+        <th scope="col">Titel</th>
+        <th scope="col">Anzahl</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
+          <td>
+            <mat-checkbox [checked]="eventsWithEqualSubject.checked"
+              (change)="eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked; checkAllSubEvents(eventsWithEqualSubject)">
+            </mat-checkbox>
+          </td>
+          <mat-accordion>
+            <mat-expansion-panel class="mat-elevation-z0">
+              <mat-expansion-panel-header>
+                <td>{{eventsWithEqualSubject.events[0].subject}}</td>
+              </mat-expansion-panel-header>
+              <table>
+                <thead>
+                  <th scope="col">
+                  </th>
+                  <th scope="col">Termine</th>
+                  <th scope="col">Start</th>
+                  <th scope="col">Ende</th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let event of eventsWithEqualSubject.events">
+                    <td>
+                      <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox>
+                    </td>
+                    <td>
+                      {{event.subject}}
+                    </td>
+                    <td>
+                      {{formatDateTimeTimeZone(event.start)}}
+                    </td>
+                    <td>
+                      {{formatDateTimeTimeZone(event.end)}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </mat-expansion-panel>
+          </mat-accordion>
+          <td>{{getActiveSubEventCount(eventsWithEqualSubject)}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- Submit -->
+    <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">Update Termine</button>
+  </div>
+</div>

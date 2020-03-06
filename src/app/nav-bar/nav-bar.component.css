@@ -1,0 +1,146 @@
+/* Add a top margin to avoid content overlay by the navbar */
+.pageContent {
+  margin-top: 70px;
+  margin-bottom: 15px;
+}
+
+/* Mark required fields */
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+}
+
+/* Breaks the item text based on words, if it is too long. */
+.list-group-item{
+  word-wrap: break-word;
+}
+
+/* HSW conform font colors */
+.hswDarkblue100Font {
+  color: #004271;
+}
+.hswDarkblue90Font {
+  color: #284E7C;
+}
+.hswDarkblue80Font {
+  color: #455D87;
+}
+.hswDarkblue70Font {
+  color: #5F6D93;
+}
+.hswDarkblue60Font {
+  color: #767FA1;
+}
+.hswDarkblue50Font {
+  color: #8D92B0;
+}
+.hswDarkblue40Font {
+  color: #A4A6BE;
+}
+.hswDarkblue30Font {
+  color: #BBBCCE;
+}
+.hswDarkblue20Font {
+  color: #D2D1DE;
+}
+.hswDarkblue10Font {
+  color: #E8E8EE;
+}
+.hswLightblue100Font {
+  color: #0085BD;
+}
+.hswLightblue90Font {
+  color: #0090C4;
+}
+.hswLightblue80Font {
+  color: #009BCA;
+}
+.hswLightblue70Font {
+  color: #18A7D0;
+}
+.hswLightblue60Font {
+  color: #54B2D6;
+}
+.hswLightblue50Font {
+  color: #78BFDD;
+}
+.hswLightblue40Font {
+  color: #98CDE5;
+}
+.hswLightblue30Font {
+  color: #B3D9EC;
+}
+.hswLightblue20Font {
+  color: #CEE6F2;
+}
+.hswLightblue10Font {
+  color: #E6F2F8;
+}
+.hswGreenFont {
+  color: #8ABD21;
+}
+
+/* HSW conform background colors */
+.hswDarkblue100Background {
+  background-color: #004271;
+}
+.hswDarkblue90Background {
+  background-color: #284E7C;
+}
+.hswDarkblue80Background {
+  background-color: #455D87;
+}
+.hswDarkblue70Background {
+  background-color: #5F6D93;
+}
+.hswDarkblue60Background {
+  background-color: #767FA1;
+}
+.hswDarkblue50Background {
+  background-color: #8D92B0;
+}
+.hswDarkblue40Background {
+  background-color: #A4A6BE;
+}
+.hswDarkblue30Background {
+  background-color: #BBBCCE;
+}
+.hswDarkblue20Background {
+  background-color: #D2D1DE;
+}
+.hswDarkblue10Background {
+  background-color: #E8E8EE;
+}
+.hswLightblue100Background {
+  background-color: #0085BD;
+}
+.hswLightblue90Background {
+  background-color: #0090C4;
+}
+.hswLightblue80Background {
+  background-color: #009BCA;
+}
+.hswLightblue70Background {
+  background-color: #18A7D0;
+}
+.hswLightblue60Background {
+  background-color: #54B2D6;
+}
+.hswLightblue50Background {
+  background-color: #78BFDD;
+}
+.hswLightblue40Background {
+  background-color: #98CDE5;
+}
+.hswLightblue30Background {
+  background-color: #B3D9EC;
+}
+.hswLightblue20Background {
+  background-color: #CEE6F2;
+}
+.hswLightblue10Background {
+  background-color: #E6F2F8;
+}
+.hswGreenBackground {
+  background-color: #8ABD21;
+}
