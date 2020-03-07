@@ -1,5 +1,5 @@
 <div class="jumbotron" *ngIf="!$authService.user">
-  <h1>Kalender-Tool</h1>
+  <h1>Kalendertool</h1>
   <p class="lead">Diese Anwendung dient zur Unterstützung der Planung von Studienbezogenen Terminen. Sie können sich
     einfach mit Ihrem Outlook
     Account anmelden und im Anschluss die Studientermine automatisch durchnummerieren lassen.</p>
@@ -24,9 +24,12 @@
       <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
     <!-- Submit -->
-    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()">Hole Termine</button>
+    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">Hole Termine</button>
   </div>
   <br>
+  <div *ngIf="$loading" class="m-5">
+    <mat-spinner></mat-spinner>
+  </div>
   <div *ngIf="$eventsWithEqualSubjectArray">
     <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Daten der
       vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen.

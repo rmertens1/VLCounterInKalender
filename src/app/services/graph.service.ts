@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AlertsService } from './alerts.service';
 import { AuthService } from './auth.service';
-import { Event } from './event';
-import { AlertType } from './alertType.enum';
+import { Event } from '../models/event';
+import { AlertType } from '../models/alertType.enum';
 
 
 @Injectable({

@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment-timezone';
-import { AlertsService } from '../alerts.service';
-import { AuthService } from '../auth.service';
-import { DateTimeTimeZone, Event } from '../event';
-import { GraphService } from '../graph.service';
+import { AlertsService } from '../services/alerts.service';
+import { AuthService } from '../services/auth.service';
+import { DateTimeTimeZone, Event } from '../models/event';
+import { GraphService } from '../services/graph.service';
 import { FormControl } from '@angular/forms';
-import { AlertType } from '../alertType.enum';
+import { AlertType } from '../models/alertType.enum';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit {
   private eventsWithEqualSubjectArray: EventsWithEqualSubject[];
   private startDateFormControl: FormControl;
   private endDateFormControl: FormControl;
+  private loading: boolean;
   private allChecked: boolean;
   private updateBody: boolean;
 
@@ -27,9 +28,12 @@ export class HomeComponent implements OnInit {
 
   constructor(private authService: AuthService,
               private graphService: GraphService,
-              private alertsService: AlertsService) { }
+              private alertsService: AlertsService) {
+  }
 
   ngOnInit() {
+    this.alertsService.removeAll();
+    this.loading = false;
     this.setFormControls();
   }
 
@@ -44,13 +48,16 @@ export class HomeComponent implements OnInit {
   }
 
   getEventsBtn_onClicked() {
+    this.alertsService.removeAll();
     this.reset();
+    this.loading = true;
     this.graphService.getEvents(this.startDateFormControl.value, this.endDateFormControl.value)
       .then((events) => {
         events = this.removeEventCounter(events);
         events = this.removeOtherEvents(events);
         this.sortEvents(events);
         this.removeSingleEvents();
+        this.loading = false;
       });
   }
 
@@ -222,6 +229,7 @@ export class HomeComponent implements OnInit {
   }
 
   async signIn(): Promise<void> {
+    this.alertsService.removeAll();
     this.authService.signIn();
   }
 
@@ -271,6 +279,14 @@ export class HomeComponent implements OnInit {
 
   public set $updateBody(updateBody: boolean) {
     this.updateBody = updateBody;
+  }
+
+  public get $loading() {
+    return this.loading;
+  }
+
+  public set $loading(loading: boolean) {
+    this.loading = loading;
   }
 }
 
