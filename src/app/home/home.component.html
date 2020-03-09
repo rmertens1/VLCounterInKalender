@@ -3,7 +3,7 @@
   <h1>Kalendertool</h1>
 
   <p class="lead">
-    Diese Anwendung dient zur Unterstützung der Planung von Studienbezogenen Terminen. Sie können sich
+    Diese Anwendung dient zur Unterstützung der Planung von studienbezogenen Terminen. Sie können sich
     einfach mit Ihrem Outlook Account anmelden und im Anschluss die Studientermine automatisch durchnummerieren lassen.
   </p>
 
@@ -12,7 +12,7 @@
 </div>
 <!-- When the user is authenticated -->
 <div *ngIf="$authService.user">
-  <p>Hallo {{$authService.user.displayName}}</p>
+  <p>Hallo {{$authService.user.displayName}}!</p>
   <div>
     <!-- Date picker -->
     <mat-form-field>
