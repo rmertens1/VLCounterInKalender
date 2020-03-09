@@ -1,10 +1,16 @@
+<!-- When the user is not authenticated -->
 <div class="jumbotron" *ngIf="!$authService.user">
   <h1>Kalendertool</h1>
-  <p class="lead">Diese Anwendung dient zur Unterstützung der Planung von Studienbezogenen Terminen. Sie können sich
-    einfach mit Ihrem Outlook
-    Account anmelden und im Anschluss die Studientermine automatisch durchnummerieren lassen.</p>
+
+  <p class="lead">
+    Diese Anwendung dient zur Unterstützung der Planung von Studienbezogenen Terminen. Sie können sich
+    einfach mit Ihrem Outlook Account anmelden und im Anschluss die Studientermine automatisch durchnummerieren lassen.
+  </p>
+
+  <!-- Authenticate -->
   <a href="javascript:undefined" class="btn btn-primary btn-large" role="button" (click)="signIn()">Jetzt anmelden!</a>
 </div>
+<!-- When the user is authenticated -->
 <div *ngIf="$authService.user">
   <p>Hallo {{$authService.user.displayName}}</p>
   <div>
@@ -23,22 +29,26 @@
       <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
       <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
-    <!-- Submit -->
+
+    <!-- Fetch events -->
     <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">Hole
       Termine</button>
   </div>
   <br>
+
   <div *ngIf="$loading" class="m-5">
     <mat-spinner></mat-spinner>
   </div>
+
   <div *ngIf="$eventsWithEqualSubjectArray">
-    <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Daten der
-      vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen.
+    <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">
+      Daten der vorherigen und nächsten Veranstaltung zu den<br>
+      Beschreibungen der Termine in Ihrem Kalender hinzufügen.
     </mat-checkbox>
     <br>
+
     <h1>Ihr Kalender</h1>
-    <div class="table-responsive">
-      <table class="table table-borderless">
+    <table class="table table-borderless table-responsive">
         <thead>
           <th scope="col">
             <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)">Alle</mat-checkbox>
@@ -55,46 +65,44 @@
             </td>
             <mat-accordion>
               <mat-expansion-panel class="mat-elevation-z0">
+
+              <!-- Subject of the first event, since they all are the same -->
                 <mat-expansion-panel-header>
                   <td>{{eventsWithEqualSubject.events[0].subject}}</td>
                 </mat-expansion-panel-header>
 
-                <div class="table-responsive">
-                  <table>
+              <table class="table table-responsive">
                     <thead>
-                      <th scope="col">
-                      </th>
+                  <th scope="col"> </th>
                       <th scope="col">Termine</th>
                       <th scope="col">Start</th>
                       <th scope="col">Ende</th>
                     </thead>
                     <tbody>
+
+                  <!-- Each row represents a single event -->
                       <tr *ngFor="let event of eventsWithEqualSubject.events">
                         <td>
-                          <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked">
-                          </mat-checkbox>
+                      <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox>
                         </td>
-                        <td>
-                          {{event.subject}}
-                        </td>
-                        <td>
-                          {{formatDateTimeTimeZone(event.start)}}
-                        </td>
-                        <td>
-                          {{formatDateTimeTimeZone(event.end)}}
-                        </td>
+                    <td>{{event.subject}}</td>
+                    <td>{{formatDateTimeTimeZone(event.start)}}</td>
+                    <td>{{formatDateTimeTimeZone(event.end)}}</td>
                       </tr>
+
                     </tbody>
                   </table>
-                </div>
               </mat-expansion-panel>
             </mat-accordion>
+
+          <!-- Number of checked Events with this subject -->
             <td>{{getActiveSubEventCount(eventsWithEqualSubject)}}</td>
           </tr>
         </tbody>
       </table>
-    </div>
+
     <!-- Submit -->
     <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">Update Termine</button>
+
   </div>
 </div>
