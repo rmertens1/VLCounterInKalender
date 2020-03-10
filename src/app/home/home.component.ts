@@ -191,7 +191,7 @@ export class HomeComponent implements OnInit {
     }
     this.alertsService.add(
       'Veranstaltungen erfolgreich aktualisiert.',
-      `${events.length} Veranstaltungen wurden erfolgreich aktualisiert. Sie können diese nun aktualisiert in Ihrem Kalender nachschlagen.`,
+      `${events.length} Veranstaltungen wurden erfolgreich aktualisiert. Sie können diese nun in Ihrem Kalender nachschlagen.`,
       AlertType.success
     );
   }
@@ -212,7 +212,7 @@ export class HomeComponent implements OnInit {
 
   formatDateTimeTimeZone(dateTime: DateTimeTimeZone): string {
     try {
-      return moment.utc(dateTime.dateTime).tz('Europe/Berlin').format('DD.MM.YYYY HH:mm');
+      return moment.utc(dateTime.dateTime).tz('Europe/Berlin').format('DD.MM HH:mm') + ' Uhr';
     } catch (error) {
       this.alertsService.add(
         'DateTimeTimeZone conversion error',

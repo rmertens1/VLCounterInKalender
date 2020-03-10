@@ -31,8 +31,7 @@
     </mat-form-field>
 
     <!-- Fetch events -->
-    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">Hole
-      Termine</button>
+    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">Hole Termine</button>
   </div>
   <br>
 
@@ -41,68 +40,56 @@
   </div>
 
   <div *ngIf="$eventsWithEqualSubjectArray">
-    <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">
-      Daten der vorherigen und nächsten Veranstaltung zu den<br>
-      Beschreibungen der Termine in Ihrem Kalender hinzufügen.
-    </mat-checkbox>
+    Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen?<br>
+    <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Ja!</mat-checkbox>
     <br>
 
     <h1>Ihr Kalender</h1>
-    <table class="table table-borderless table-responsive">
-        <thead>
-          <th scope="col">
-            <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)">Alle</mat-checkbox>
-          </th>
-          <th scope="col">Titel</th>
-          <th scope="col">Anzahl</th>
-        </thead>
-        <tbody>
-          <tr *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
-            <td>
-              <mat-checkbox [checked]="eventsWithEqualSubject.checked"
-                (change)="eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked; checkAllSubEvents(eventsWithEqualSubject)">
-              </mat-checkbox>
-            </td>
-            <mat-accordion>
-              <mat-expansion-panel class="mat-elevation-z0">
+    <div class="row">
+      <div class="col-1"><b>Alle</b><br>
+        <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
+      </div>
+      <div class="col-8  ml-3"><b>Titel</b></div>
+      <div class="col-1"><b>Anzahl</b></div>
+    </div>
 
+
+    <div class="row" *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
+      <div class="col-1">
+        <mat-checkbox [checked]="eventsWithEqualSubject.checked"
+          (change)="eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked; checkAllSubEvents(eventsWithEqualSubject)">
+        </mat-checkbox>
+      </div>
+      <div class="col-9">
+        <mat-accordion>
+          <mat-expansion-panel class="mat-elevation-z0">
               <!-- Subject of the first event, since they all are the same -->
-                <mat-expansion-panel-header>
-                  <td>{{eventsWithEqualSubject.events[0].subject}}</td>
-                </mat-expansion-panel-header>
-
-              <table class="table table-responsive">
-                    <thead>
-                  <th scope="col"> </th>
-                      <th scope="col">Termine</th>
-                      <th scope="col">Start</th>
-                      <th scope="col">Ende</th>
-                    </thead>
-                    <tbody>
-
+            <mat-expansion-panel-header>
+              {{eventsWithEqualSubject.events[0].subject}}
+            </mat-expansion-panel-header>
+            <table class="table table-responsive table-borderless">
+              <thead>
+                <th scope="col">
+                </th>
+                <th scope="col">Start</th>
+                <th scope="col">Ende</th>
+              </thead>
+              <tbody>
                   <!-- Each row represents a single event -->
-                      <tr *ngFor="let event of eventsWithEqualSubject.events">
-                        <td>
-                      <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox>
-                        </td>
-                    <td>{{event.subject}}</td>
-                    <td>{{formatDateTimeTimeZone(event.start)}}</td>
-                    <td>{{formatDateTimeTimeZone(event.end)}}</td>
-                      </tr>
-
-                    </tbody>
-                  </table>
-              </mat-expansion-panel>
-            </mat-accordion>
-
-          <!-- Number of checked Events with this subject -->
-            <td>{{getActiveSubEventCount(eventsWithEqualSubject)}}</td>
-          </tr>
-        </tbody>
-      </table>
-
+                <tr *ngFor="let event of eventsWithEqualSubject.events">
+                  <td><mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox></td>
+                  <td>{{formatDateTimeTimeZone(event.start)}}</td>
+                  <td>{{formatDateTimeTimeZone(event.end)}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+      <!-- Number of checked Events with this subject -->
+      <div class="col-1">{{getActiveSubEventCount(eventsWithEqualSubject)}}</div>
+    </div>
     <!-- Submit -->
     <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">Update Termine</button>
-
   </div>
 </div>
