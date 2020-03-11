@@ -78,8 +78,8 @@
                   <!-- Each row represents a single event -->
                 <tr *ngFor="let event of eventsWithEqualSubject.events">
                   <td><mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox></td>
-                  <td>{{formatDateTimeTimeZone(event.start)}}</td>
-                  <td>{{formatDateTimeTimeZone(event.end)}}</td>
+                  <td>{{$eventService.formatDateTimeTimeZone(event.start)}}</td>
+                  <td>{{$eventService.formatDateTimeTimeZone(event.end)}}</td>
                 </tr>
               </tbody>
             </table>
@@ -87,7 +87,7 @@
         </mat-accordion>
       </div>
       <!-- Number of checked Events with this subject -->
-      <div class="col-1">{{getActiveSubEventCount(eventsWithEqualSubject)}}</div>
+      <div class="col-1">{{$eventService.getActiveSubEventCount(eventsWithEqualSubject)}}</div>
     </div>
     <!-- Submit -->
     <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">Update Termine</button>
