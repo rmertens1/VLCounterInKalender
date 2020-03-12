@@ -31,7 +31,7 @@ export class HomeComponent implements OnInit {
   }
 
   setFormControls() {
-    const startDate: Date = this.eventService.getStartDate();
+    const startDate: Date = this.eventService.getStartDate(new Date());
     const endDate: Date = this.eventService.getEndDate(startDate, 6);
     this.startDateFormControl = new FormControl(startDate);
     this.endDateFormControl = new FormControl(endDate);

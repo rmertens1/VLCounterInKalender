@@ -45,6 +45,7 @@ export class GraphService {
           enddatetime: endDate.toISOString()
         })
         .top(999)
+        .header('Prefer','outlook.timezone="Central European Time"')
         .get();
 
       return result.value;

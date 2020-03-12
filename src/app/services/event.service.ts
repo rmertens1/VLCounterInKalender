@@ -12,7 +12,7 @@ import * as moment from 'moment-timezone';
 export class EventService {
 
   constructor(private graphService: GraphService,
-    private alertsService: AlertsService) { }
+              private alertsService: AlertsService) { }
 
   // Regex
   private eventCounterRemovalRegex: RegExp = /(\(\d*\/\d*\))*/gi;
@@ -31,7 +31,54 @@ export class EventService {
     return eventsWithEqualSubjectArray;
   }
 
-  removeEventCounter(events: Event[]): Event[] {
+  public updateEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[], updateEventBody: boolean): boolean {
+    if (!eventsWithEqualSubjectArray) {
+      return false;
+    }
+    const renamedEvents = this.renameEvents(eventsWithEqualSubjectArray, updateEventBody);
+    for (const event of renamedEvents) {
+      // Do not submit internal checked status
+      event.checked = undefined;
+      this.graphService.updateEvent(event);
+    }
+    this.alertsService.add(
+      'Veranstaltungen erfolgreich aktualisiert.',
+      `${renamedEvents.length} Veranstaltungen wurden erfolgreich aktualisiert. Sie können diese nun in Ihrem Kalender nachschlagen.`,
+      AlertType.success
+    );
+    return true;
+  }
+
+  public getStartDate(today: Date): Date {
+    const startDate = (today.getMonth() <= 5) ? new Date(today.getFullYear(), 1, 1) : new Date(today.getFullYear(), 7, 1);
+    return startDate;
+  }
+
+  public getEndDate(startDate: Date, monthDifference: number): Date {
+    const endDate = new Date(startDate);
+    endDate.setMonth(startDate.getMonth() + monthDifference);
+    return endDate;
+  }
+
+  public getActiveSubEventCount(eventsWithEqualSubject: EventsWithEqualSubject): number {
+    let count = 0;
+    for (const event of eventsWithEqualSubject.events) {
+      if (event.checked) { count += 1; }
+    }
+    return count;
+  }
+
+  public formatDateTimeTimeZone(dateTime: DateTimeTimeZone): string {
+    const date = moment.tz(dateTime.dateTime, dateTime.timeZone).format('DD.MM HH:mm');;
+    if (date === 'Invalid date') {
+      this.alertsService.add('DateTimeTimeZone conversion error',
+        dateTime.dateTime, AlertType.danger);
+      return date;
+    }
+    return date + ' Uhr';
+  }
+
+  private removeEventCounter(events: Event[]): Event[] {
     for (const event of events) {
       if (event.subject.match(this.eventCounterRemovalRegex)) {
         event.subject = event.subject.replace(this.eventCounterRemovalRegex, '');
@@ -40,7 +87,7 @@ export class EventService {
     return events;
   }
 
-  removeOtherEvents(events: Event[]): Event[] {
+  private removeOtherEvents(events: Event[]): Event[] {
     const newEvents: Event[] = [];
     for (const event of events) {
       // Comparison to check if the subject of an event matches the pattern the HSW uses
@@ -51,7 +98,7 @@ export class EventService {
     return newEvents;
   }
 
-  sortEvents(events: Event[]): EventsWithEqualSubject[] {
+  private sortEvents(events: Event[]): EventsWithEqualSubject[] {
     const tmpEventsWithEqualSubjectArray: EventsWithEqualSubject[] = [];
 
     // Sorting the events into a matrix of Events with equal Subjects
@@ -90,9 +137,6 @@ export class EventService {
   }
 
   private renameEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[], updateEventBody: boolean): Event[] {
-    if (!eventsWithEqualSubjectArray) {
-      return;
-    }
     const renamedEvents: Event[] = [];
 
     // The sorted array will be run throgh; The counters will be added to the subject of the events
@@ -133,51 +177,5 @@ export class EventService {
       }
     }
     return renamedEvents;
-  }
-
-  updateEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[], updateEventBody: boolean) {
-    const renamedEvents = this.renameEvents(eventsWithEqualSubjectArray, updateEventBody);
-    for (const event of renamedEvents) {
-      // Do not submit internal checked status
-      event.checked = undefined;
-      this.graphService.updateEvent(event);
-    }
-    this.alertsService.add(
-      'Veranstaltungen erfolgreich aktualisiert.',
-      `${renamedEvents.length} Veranstaltungen wurden erfolgreich aktualisiert. Sie können diese nun in Ihrem Kalender nachschlagen.`,
-      AlertType.success
-    );
-  }
-
-  formatDateTimeTimeZone(dateTime: DateTimeTimeZone): string {
-    try {
-      return moment.utc(dateTime.dateTime).tz('Europe/Berlin').format('DD.MM HH:mm') + ' Uhr';
-    } catch (error) {
-      this.alertsService.add(
-        'DateTimeTimeZone conversion error',
-        JSON.stringify(error),
-        AlertType.danger
-      );
-    }
-  }
-
-  getActiveSubEventCount(eventsWithEqualSubject: EventsWithEqualSubject): number {
-    let count = 0;
-    for (const event of eventsWithEqualSubject.events) {
-      if (event.checked) { count += 1; }
-    }
-    return count;
-  }
-
-  getStartDate(): Date {
-    const today = new Date();
-    const startDate = (today.getMonth() < 5) ? new Date(today.getFullYear(), 1, 1) : new Date(today.getFullYear(), 7, 1);
-    return startDate;
-  }
-
-  getEndDate(startDate: Date, monthDifference: number): Date {
-    const endDate = new Date(startDate);
-    endDate.setMonth(startDate.getMonth() + monthDifference);
-    return endDate;
   }
 }
