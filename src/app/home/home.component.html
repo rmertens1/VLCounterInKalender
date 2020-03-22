@@ -90,14 +90,14 @@
         <!-- Number of checked Events with this subject -->
         <div class="col-1">{{$eventService.getActiveSubEventCount(eventsWithEqualSubject)}}</div>
       </div>
-      Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die Hilfe!
+      <br>Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die Hilfe!<br>
       <!-- Submit -->
-      <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">Update Termine</button>
+      <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">Termine aktualisieren</button>
     </div>
   </div>
 </div>
 <div *ngIf="$eventsWithEqualSubjectArray">
   <div *ngIf="$eventsWithEqualSubjectArray.length === 0">
-    Es wurden keine Termine in Ihrem Kalender gefunden. Probieren Sie doch einen anderen Zeitraum!
+    Es wurden keine Termine in Ihrem Kalender gefunden. Haben Sie den korrekten Zeitraum eingestellt?<br>
   </div>
 </div>
