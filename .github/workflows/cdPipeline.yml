@@ -21,7 +21,7 @@ jobs:
       run: |
          npm install -g @angular/cli
          npm install
-         ng build --prod --base-href="/VLCounterInKalender/"
+         ng build --prod --base-href="/kalendertool/"
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v2
       env:
