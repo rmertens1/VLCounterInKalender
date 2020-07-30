@@ -1,5 +1,5 @@
 export class Team {
-  id:string;
-  displayName:string;
-  webUrl:string;
+  id: string;
+  displayName: string;
+  webUrl: string;
 }
