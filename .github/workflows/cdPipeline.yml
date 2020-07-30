@@ -21,7 +21,8 @@ jobs:
       run: |
          npm install -g @angular/cli
          npm install
-         ng build --prod --base-href="/kalendertool/"
+         ng build --prod --base-href="/Kalendertool/"
+
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v2
       env:
