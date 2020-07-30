@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
   constructor(private eventService: EventService,
               private authService: AuthService,
               private alertsService: AlertsService,
-              private groupService: TeamService) {
+              private teamService: TeamService) {
   }
 
   selected = new FormControl('valid', []);
@@ -34,6 +34,11 @@ export class HomeComponent implements OnInit {
     this.alertsService.removeAll();
     this.loading = false;
     this.setFormControls();
+    if (this.authService.authenticated){
+      this.teamService.getTeams().then(teams =>{
+        this.teams = teams;
+      })
+    }
   }
 
   setFormControls() {
@@ -80,7 +85,7 @@ export class HomeComponent implements OnInit {
   }
 
   async getTeams() {
-    this.teams = await this.groupService.getTeams();
+    this.teams = await this.teamService.getTeams();
   }
 
   async signIn(): Promise<void> {
