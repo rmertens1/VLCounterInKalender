@@ -4,6 +4,8 @@ import { AuthService } from '../services/auth.service';
 import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
+import { Team } from '../models/team';
+import { TeamService } from '../services/team.service';
 
 @Component({
   selector: 'app-home',
@@ -18,11 +20,15 @@ export class HomeComponent implements OnInit {
   private loading: boolean;
   private allChecked: boolean;
   private updateBody: boolean;
+  private teams: Team[];
 
   constructor(private eventService: EventService,
               private authService: AuthService,
-              private alertsService: AlertsService) {
+              private alertsService: AlertsService,
+              private groupService: TeamService) {
   }
+
+  selected = new FormControl('valid', []);
 
   ngOnInit() {
     this.alertsService.removeAll();
@@ -71,6 +77,10 @@ export class HomeComponent implements OnInit {
     this.eventsWithEqualSubjectArray = undefined;
     this.allChecked = false;
     this.updateBody = false;
+  }
+
+  async getTeams() {
+    this.teams = await this.groupService.getTeams();
   }
 
   async signIn(): Promise<void> {
@@ -141,5 +151,13 @@ export class HomeComponent implements OnInit {
 
   public set $loading(loading: boolean) {
     this.loading = loading;
+  }
+
+  public get $teams() {
+    return this.teams;
+  }
+
+  public set $teams(teams: Team[]) {
+    this.teams = teams;
   }
 }

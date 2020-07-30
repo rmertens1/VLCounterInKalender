@@ -19,7 +19,7 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
     AppComponent,
     NavBarComponent,
     HomeComponent,
-    AlertsComponent
+      AlertsComponent
   ],
   imports: [
     BrowserModule,

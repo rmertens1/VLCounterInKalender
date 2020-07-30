@@ -3,21 +3,53 @@
   <h1>Kalendertool</h1>
 
   <p class="lead">
-    Diese Anwendung dient zur Unterstützung der Planung von studienbezogenen Terminen. Sie können sich
-    einfach mit Ihrem Outlook Account anmelden und im Anschluss die Studientermine automatisch durchnummerieren lassen.
+    Diese Anwendung dient zur Unterstützung der Planung von studienbezogenen
+    Terminen. Sie können sich einfach mit Ihrem Outlook Account anmelden und im
+    Anschluss die Studientermine automatisch durchnummerieren lassen.
   </p>
 
   <!-- Authenticate -->
-  <a href="javascript:undefined" class="btn btn-primary btn-large" role="button" (click)="signIn()">Jetzt anmelden!</a>
+  <a
+    href="javascript:undefined"
+    class="btn btn-primary btn-large"
+    role="button"
+    (click)="signIn()"
+    >Jetzt anmelden!</a
+  >
 </div>
 <!-- When the user is authenticated -->
 <div *ngIf="$authService.user">
-  <p>Hallo {{$authService.user.displayName}}!</p>
+  <a
+    href="javascript:undefined"
+    class="btn btn-primary btn-large"
+    role="button"
+    (click)="getTeams()"
+    >Jetzt alle Teams abrufen.</a
+  >
+
+  <div *ngIf="$teams">
+    <mat-form-field appearance="fill">
+      <mat-label>Choose one</mat-label>
+      <mat-select [formControl]="selected">
+        <mat-option *ngFor="let team of $teams" [value]="team">
+          {{team.displayName}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    Auswahl-Id: {{selected.value?.id}}, Link: <a href="{{selected.value?.webUrl}}">{{selected.value?.webUrl}}</a>
+  </div>
+
+  <p>Hallo {{ $authService.user.displayName }}!</p>
   <div>
     <!-- Date picker -->
     <mat-form-field>
       <mat-label>Startdatum</mat-label>
-      <input matInput [matDatepicker]="picker1" [formControl]="$startDateFormControl" readonly>
+      <input
+        matInput
+        [matDatepicker]="picker1"
+        [formControl]="$startDateFormControl"
+        readonly
+      />
       <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
       <mat-datepicker #picker1></mat-datepicker>
     </mat-form-field>
@@ -25,15 +57,27 @@
     <!-- Date picker -->
     <mat-form-field>
       <mat-label>Enddatum</mat-label>
-      <input matInput [matDatepicker]="picker2" [formControl]="$endDateFormControl" readonly>
+      <input
+        matInput
+        [matDatepicker]="picker2"
+        [formControl]="$endDateFormControl"
+        readonly
+      />
       <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
       <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
 
     <!-- Fetch events -->
-    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">Hole Termine</button>
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="getEventsBtn_onClicked()"
+      [disabled]="$loading"
+    >
+      Hole Termine
+    </button>
   </div>
-  <br>
+  <br />
 
   <div *ngIf="$loading" class="m-5">
     <mat-spinner></mat-spinner>
@@ -41,24 +85,41 @@
 
   <div *ngIf="$eventsWithEqualSubjectArray">
     <div *ngIf="$eventsWithEqualSubjectArray.length > 0">
-      Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen?<br>
-      <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Ja!</mat-checkbox>
-      <br>
+      Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der
+      Termine in Ihrem Kalender hinzufügen?<br />
+      <mat-checkbox
+        [checked]="$updateBody"
+        (change)="$updateBody = !$updateBody"
+        >Ja!</mat-checkbox
+      >
+      <br />
 
       <h1>Ihr Kalender</h1>
       <div class="row">
-        <div class="col-1"><b>Alle</b><br>
-          <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
+        <div class="col-1">
+          <b>Alle</b><br />
+          <mat-checkbox
+            #all
+            [checked]="$allChecked"
+            (change)="checkAll(all.checked)"
+          ></mat-checkbox>
         </div>
-        <div class="col-8  ml-3"><b>Titel</b></div>
+        <div class="col-8 ml-3"><b>Titel</b></div>
         <div class="col-1"><b>Anzahl</b></div>
       </div>
 
-
-      <div class="row" *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
+      <div
+        class="row"
+        *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray"
+      >
         <div class="col-1">
-          <mat-checkbox [checked]="eventsWithEqualSubject.checked"
-            (change)="eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked; checkAllSubEvents(eventsWithEqualSubject)">
+          <mat-checkbox
+            [checked]="eventsWithEqualSubject.checked"
+            (change)="
+              eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked;
+              checkAllSubEvents(eventsWithEqualSubject)
+            "
+          >
           </mat-checkbox>
         </div>
         <div class="col-9">
@@ -66,21 +127,29 @@
             <mat-expansion-panel class="mat-elevation-z0">
               <!-- Subject of the first event, since they all are the same -->
               <mat-expansion-panel-header>
-                {{eventsWithEqualSubject.events[0].subject}}
+                {{ eventsWithEqualSubject.events[0].subject }}
               </mat-expansion-panel-header>
               <table class="table table-responsive table-borderless">
                 <thead>
-                  <th scope="col">
-                  </th>
+                  <th scope="col"></th>
                   <th scope="col">Start</th>
                   <th scope="col">Ende</th>
                 </thead>
                 <tbody>
                   <!-- Each row represents a single event -->
                   <tr *ngFor="let event of eventsWithEqualSubject.events">
-                    <td><mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox></td>
-                    <td>{{$eventService.formatDateTimeTimeZone(event.start)}}</td>
-                    <td>{{$eventService.formatDateTimeTimeZone(event.end)}}</td>
+                    <td>
+                      <mat-checkbox
+                        [checked]="event.checked"
+                        (change)="event.checked = !event.checked"
+                      ></mat-checkbox>
+                    </td>
+                    <td>
+                      {{ $eventService.formatDateTimeTimeZone(event.start) }}
+                    </td>
+                    <td>
+                      {{ $eventService.formatDateTimeTimeZone(event.end) }}
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -88,16 +157,26 @@
           </mat-accordion>
         </div>
         <!-- Number of checked Events with this subject -->
-        <div class="col-1">{{$eventService.getActiveSubEventCount(eventsWithEqualSubject)}}</div>
+        <div class="col-1">
+          {{ $eventService.getActiveSubEventCount(eventsWithEqualSubject) }}
+        </div>
       </div>
-      <br>Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die Hilfe!<br>
+      <br />Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die
+      Hilfe!<br />
       <!-- Submit -->
-      <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">Termine aktualisieren</button>
+      <button
+        mat-flat-button
+        color="primary"
+        (click)="updateEventsBtn_onClicked()"
+      >
+        Termine aktualisieren
+      </button>
     </div>
   </div>
 </div>
 <div *ngIf="$eventsWithEqualSubjectArray">
   <div *ngIf="$eventsWithEqualSubjectArray.length === 0">
-    Es wurden keine Termine in Ihrem Kalender gefunden. Haben Sie den korrekten Zeitraum eingestellt?<br>
+    Es wurden keine Termine in Ihrem Kalender gefunden. Haben Sie den korrekten
+    Zeitraum eingestellt?<br />
   </div>
 </div>
