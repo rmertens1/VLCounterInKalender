@@ -28,6 +28,11 @@ export class DateTimeTimeZone {
 }
 
 export class Attendee {
-  emailAddress: string;
+  emailAddress: EmailAddress;
   type: string;
+}
+
+export class  EmailAddress{
+  address: string;
+  name: string;
 }

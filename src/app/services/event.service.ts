@@ -66,11 +66,11 @@ export class EventService {
           teamsEvent.isOnlineMeeting = true;
           teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
 
-          let testAttendee =new Attendee();
-          testAttendee.emailAddress = 'julian.schmidtke@hsw-stud.de';
-          testAttendee.type = 'required';
+          // let testAttendee =new Attendee();
+          // testAttendee.emailAddress = 'julian.schmidtke@hsw-stud.de';
+          // testAttendee.type = 'required';
 
-          teamsEvent.attendees = [testAttendee];
+          // teamsEvent.attendees = [testAttendee];
           this.graphService.createEvent(teamsEvent);
         }
       }
