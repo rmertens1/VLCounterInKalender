@@ -5,7 +5,6 @@ import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { Team } from '../models/team';
-import { TeamService } from '../services/team.service';
 
 @Component({
   selector: 'app-home',
@@ -19,26 +18,20 @@ export class HomeComponent implements OnInit {
   private endDateFormControl: FormControl;
   private loading: boolean;
   private allChecked: boolean;
+  private allTeamsChecked: boolean;
   private updateBody: boolean;
+  private createTeamsMeeting: boolean;
   private teams: Team[];
 
   constructor(private eventService: EventService,
               private authService: AuthService,
-              private alertsService: AlertsService,
-              private teamService: TeamService) {
+              private alertsService: AlertsService) {
   }
-
-  selected = new FormControl('valid', []);
 
   ngOnInit() {
     this.alertsService.removeAll();
     this.loading = false;
     this.setFormControls();
-    if (this.authService.authenticated){
-      this.teamService.getTeams().then(teams =>{
-        this.teams = teams;
-      })
-    }
   }
 
   setFormControls() {
@@ -60,6 +53,7 @@ export class HomeComponent implements OnInit {
     if (!this.eventsWithEqualSubjectArray) {
       return;
     }
+    this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
     this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody);
     this.reset();
   }
@@ -72,20 +66,31 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  teamsCheckAll(teamsChecked: boolean) {
+    this.allTeamsChecked = teamsChecked;
+    for (const eventsWithEqualSubject of this.eventsWithEqualSubjectArray) {
+      eventsWithEqualSubject.teamsChecked = teamsChecked;
+      this.teamsCheckAllSubEvents(eventsWithEqualSubject);
+    }
+  }
+
   checkAllSubEvents(eventsWithEqualSubject: EventsWithEqualSubject) {
     for (const event of eventsWithEqualSubject.events) {
       event.checked = eventsWithEqualSubject.checked;
     }
   }
 
+  teamsCheckAllSubEvents(eventsWithEqualSubject: EventsWithEqualSubject) {
+    for (const event of eventsWithEqualSubject.events) {
+      event.teamsChecked = eventsWithEqualSubject.teamsChecked;
+    }
+  }
+
   reset() {
     this.eventsWithEqualSubjectArray = undefined;
     this.allChecked = false;
+    this.allTeamsChecked = false;
     this.updateBody = false;
-  }
-
-  async getTeams() {
-    this.teams = await this.teamService.getTeams();
   }
 
   async signIn(): Promise<void> {
@@ -164,5 +169,21 @@ export class HomeComponent implements OnInit {
 
   public set $teams(teams: Team[]) {
     this.teams = teams;
+  }
+
+  public get $createTeamsMeeting() {
+    return this.createTeamsMeeting;
+  }
+
+  public set $createTeamsMeeting(createTeamsMeeting: boolean) {
+    this.createTeamsMeeting = createTeamsMeeting;
+  }
+
+  public get $allTeamsChecked() {
+    return this.allTeamsChecked;
+  }
+
+  public set $allTeamsChecked(allTeamsChecked: boolean) {
+    this.allTeamsChecked = allTeamsChecked;
   }
 }

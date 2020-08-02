@@ -6,9 +6,13 @@ export class Event {
   body: ItemBody;
   start: DateTimeTimeZone;
   end: DateTimeTimeZone;
+  attendees: Attendee[];
+  isOnlineMeeting: boolean;
+  onlineMeetingProvider: string;
 
   // Internal Boolean to toggle the checked view
   checked: boolean;
+  teamsChecked: boolean;
 }
 
 // https://docs.microsoft.com/en-us/graph/api/resources/itembody?view=graph-rest-1.0
@@ -21,4 +25,9 @@ export class ItemBody {
 export class DateTimeTimeZone {
   dateTime: string;
   timeZone: string;
+}
+
+export class Attendee {
+  emailAddress: string;
+  type: string;
 }

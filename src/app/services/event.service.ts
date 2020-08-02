@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from './graph.service';
-import { Event, DateTimeTimeZone } from '../models/event';
+import { Event, DateTimeTimeZone, Attendee } from '../models/event';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { AlertsService } from './alerts.service';
 import { AlertType } from '../models/alertType.enum';
@@ -39,6 +39,7 @@ export class EventService {
     for (const event of renamedEvents) {
       // Do not submit internal checked status
       event.checked = undefined;
+      event.teamsChecked = undefined;
       this.graphService.updateEvent(event);
     }
     this.alertsService.add(
@@ -46,6 +47,35 @@ export class EventService {
       `${renamedEvents.length} Veranstaltungen wurden erfolgreich aktualisiert. Sie können diese nun in Ihrem Kalender nachschlagen.`,
       AlertType.success
     );
+    return true;
+  }
+
+  public createTeamsEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): boolean {
+    if (!eventsWithEqualSubjectArray) {
+      return false;
+    }
+
+    for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
+      for(const event of eventsWithEqualSubject.events){
+        if(event.teamsChecked){
+          let teamsEvent : Event = new Event();
+          teamsEvent.subject = '(TEAMS) ' + event.subject;
+          teamsEvent.start = event.start;
+          teamsEvent.end = event.end;
+          teamsEvent.body = event.body;
+          teamsEvent.isOnlineMeeting = true;
+          teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
+
+          let testAttendee =new Attendee();
+          testAttendee.emailAddress = 'julian.schmidtke@hsw-stud.de';
+          testAttendee.type = 'required';
+
+          teamsEvent.attendees = [testAttendee];
+          this.graphService.createEvent(teamsEvent);
+        }
+      }
+    }
+
     return true;
   }
 
@@ -60,10 +90,18 @@ export class EventService {
     return endDate;
   }
 
-  public getActiveSubEventCount(eventsWithEqualSubject: EventsWithEqualSubject): number {
+  public getCheckedSubEventCount(eventsWithEqualSubject: EventsWithEqualSubject): number {
     let count = 0;
     for (const event of eventsWithEqualSubject.events) {
       if (event.checked) { count += 1; }
+    }
+    return count;
+  }
+
+  public getTeamsCheckedSubEventCount(eventsWithEqualSubject: EventsWithEqualSubject): number {
+    let count = 0;
+    for (const event of eventsWithEqualSubject.events) {
+      if (event.teamsChecked) { count += 1; }
     }
     return count;
   }
@@ -141,7 +179,7 @@ export class EventService {
 
     // The sorted array will be run throgh; The counters will be added to the subject of the events
     for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
-      const eventCount = this.getActiveSubEventCount(eventsWithEqualSubject);
+      const eventCount = this.getCheckedSubEventCount(eventsWithEqualSubject);
       if (eventCount > 0) {
         let actCount = 0;
         for (let i = 0; i < eventsWithEqualSubject.events.length; i++) {

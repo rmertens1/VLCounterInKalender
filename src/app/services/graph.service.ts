@@ -38,7 +38,7 @@ export class GraphService {
     try {
       const result = await this.graphClient
         .api('/me/calendarview')
-        .select('id,subject,body,start,end')
+        .select('id,subject,body,start,end,isOnlineMeeting,onlineMeetingProvider')
         .orderby('start/dateTime ASC')
         .query({
           startdatetime: startDate.toISOString(),
@@ -63,6 +63,19 @@ export class GraphService {
       return true;
     } catch (error) {
       this.alertsService.add(`Veranstaltung ${event.id} konnte nicht geupdated werden.  Bitte versuchen Sie es erneut.`,
+        JSON.stringify(error, null, 2), AlertType.danger);
+      return false;
+    }
+  }
+
+  async createEvent(event: Event): Promise<boolean> {
+    try {
+      const result = await this.graphClient
+        .api(`/me/events/`)
+        .create(event);
+      return true;
+    } catch (error) {
+      this.alertsService.add(`Veranstaltung ${event.subject} konnte nicht erstellt werden.  Bitte versuchen Sie es erneut.`,
         JSON.stringify(error, null, 2), AlertType.danger);
       return false;
     }

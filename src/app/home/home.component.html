@@ -16,22 +16,27 @@
 
   <p>Hallo {{ $authService.user.displayName }}!</p>
   <div>
-    <!-- Date picker -->
-    <mat-form-field>
-      <mat-label>Startdatum</mat-label>
-      <input matInput [matDatepicker]="picker1" [formControl]="$startDateFormControl" readonly />
-      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-      <mat-datepicker #picker1></mat-datepicker>
-    </mat-form-field>
 
-    <!-- Date picker -->
-    <mat-form-field>
-      <mat-label>Enddatum</mat-label>
-      <input matInput [matDatepicker]="picker2" [formControl]="$endDateFormControl" readonly />
-      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-      <mat-datepicker #picker2></mat-datepicker>
-    </mat-form-field>
+    <p>
+      <!-- Date picker -->
+      <mat-form-field>
+        <mat-label>Startdatum</mat-label>
+        <input matInput [matDatepicker]="picker1" [formControl]="$startDateFormControl" readonly />
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
 
+      <!-- Date picker -->
+      <mat-form-field>
+        <mat-label>Enddatum</mat-label>
+        <input matInput [matDatepicker]="picker2" [formControl]="$endDateFormControl" readonly />
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <mat-checkbox [checked]="$createTeamsMeeting" (change)="$createTeamsMeeting = !$createTeamsMeeting">Teams Meetings
+        erstellen</mat-checkbox>
+    </p>
     <!-- Fetch events -->
     <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">
       Hole Termine
@@ -53,11 +58,16 @@
       <h1>Ihr Kalender</h1>
       <div class="row">
         <div class="col-1">
-          <b>Alle</b><br />
+          <b>Zählen</b><br />
           <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
         </div>
-        <div class="col-8 ml-3"><b>Titel</b></div>
-        <div class="col-1"><b>Anzahl</b></div>
+        <div class="col-1">
+          <b>Teams</b><br />
+          <mat-checkbox #allTeams [checked]="$allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)"></mat-checkbox>
+        </div>
+        <div class="col-7 ml-3"><b>Titel</b></div>
+        <div class="col-1"><b>Anzahl Zählen</b></div>
+        <div class="col-1"><b>Anzahl Teams</b></div>
       </div>
 
       <div class="row" *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
@@ -68,30 +78,24 @@
             ">
           </mat-checkbox>
         </div>
-        <div class="col-9">
+        <div class="col-1">
+          <mat-checkbox [checked]="eventsWithEqualSubject.teamsChecked" (change)="
+              eventsWithEqualSubject.teamsChecked = !eventsWithEqualSubject.teamsChecked;
+              teamsCheckAllSubEvents(eventsWithEqualSubject)
+            ">
+          </mat-checkbox>
+        </div>
+        <div class="col-7">
           <mat-accordion>
             <mat-expansion-panel class="mat-elevation-z0">
               <!-- Subject of the first event, since they all are the same -->
               <mat-expansion-panel-header>
                 {{ eventsWithEqualSubject.events[0].subject }}
               </mat-expansion-panel-header>
-              <div *ngIf="$teams">
-                <mat-form-field appearance="fill">
-                  <mat-label>Choose one</mat-label>
-                  <mat-select [formControl]="selected">
-                    <mat-option *ngFor="let team of $teams" [value]="team">
-                      {{ team.displayName }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-                Auswahl-Id: {{ selected.value?.id }}, Link:
-                <a href="{{ selected.value?.webUrl }}">{{
-                          selected.value?.webUrl
-                        }}</a>
-              </div>
               <table class="table table-responsive table-borderless">
                 <thead>
-                  <th scope="col"></th>
+                  <th scope="col">Zählen</th>
+                  <th scope="col">Teams</th>
                   <th scope="col">Start</th>
                   <th scope="col">Ende</th>
                 </thead>
@@ -100,6 +104,9 @@
                   <tr *ngFor="let event of eventsWithEqualSubject.events">
                     <td>
                       <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox>
+                    </td>
+                    <td>
+                      <mat-checkbox [checked]="event.teamsChecked" (change)="event.teamsChecked = !event.teamsChecked"></mat-checkbox>
                     </td>
                     <td>
                       {{ $eventService.formatDateTimeTimeZone(event.start) }}
@@ -115,7 +122,10 @@
         </div>
         <!-- Number of checked Events with this subject -->
         <div class="col-1">
-          {{ $eventService.getActiveSubEventCount(eventsWithEqualSubject) }}
+          {{ $eventService.getCheckedSubEventCount(eventsWithEqualSubject) }}
+        </div>
+        <div class="col-1">
+          {{ $eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) }}
         </div>
       </div>
       <br />Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die

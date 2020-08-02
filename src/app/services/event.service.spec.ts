@@ -249,31 +249,31 @@ describe('Service: Event', () => {
     // Empty event array should return zero checked
     let events: Event[] = [];
     eventsWithEqualSubject.events = events;
-    expect(eventService.getActiveSubEventCount(eventsWithEqualSubject)).toEqual(0);
+    expect(eventService.getCheckedSubEventCount(eventsWithEqualSubject)).toEqual(0);
 
 
     // Event array with one unchecked event should return zero checked
     events = [uncheckedEvent];
     eventsWithEqualSubject.events = events;
-    expect(eventService.getActiveSubEventCount(eventsWithEqualSubject)).toEqual(0);
+    expect(eventService.getCheckedSubEventCount(eventsWithEqualSubject)).toEqual(0);
 
 
     // Event array with one checked event should return one checked
     events = [checkedEvent];
     eventsWithEqualSubject.events = events;
-    expect(eventService.getActiveSubEventCount(eventsWithEqualSubject)).toEqual(1);
+    expect(eventService.getCheckedSubEventCount(eventsWithEqualSubject)).toEqual(1);
 
 
     // Event array with one unchecked and one checked event should return one checked
     events = [checkedEvent, uncheckedEvent];
     eventsWithEqualSubject.events = events;
-    expect(eventService.getActiveSubEventCount(eventsWithEqualSubject)).toEqual(1);
+    expect(eventService.getCheckedSubEventCount(eventsWithEqualSubject)).toEqual(1);
 
 
     // Event array with two unchecked and two checked event should return two checked
     events = [checkedEvent, checkedEvent, uncheckedEvent, uncheckedEvent];
     eventsWithEqualSubject.events = events;
-    expect(eventService.getActiveSubEventCount(eventsWithEqualSubject)).toEqual(2);
+    expect(eventService.getCheckedSubEventCount(eventsWithEqualSubject)).toEqual(2);
   });
 
   it('FormatDateTimeTimeZone should format to Europe/Berlin TimeZone', () => {
