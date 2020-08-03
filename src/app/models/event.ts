@@ -9,6 +9,7 @@ export class Event {
   attendees: Attendee[];
   isOnlineMeeting: boolean;
   onlineMeetingProvider: string;
+  location: Location;
 
   // Internal Boolean to toggle the checked view
   checked: boolean;
@@ -32,7 +33,11 @@ export class Attendee {
   type: string;
 }
 
-export class  EmailAddress{
+export class EmailAddress{
   address: string;
   name: string;
+}
+
+export class Location{
+  displayName: string;
 }

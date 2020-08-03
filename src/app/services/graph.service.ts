@@ -38,7 +38,7 @@ export class GraphService {
     try {
       const result = await this.graphClient
         .api('/me/calendarview')
-        .select('id,subject,body,start,end,isOnlineMeeting,onlineMeetingProvider')
+        .select('id,subject,body,start,end,location')
         .orderby('start/dateTime ASC')
         .query({
           startdatetime: startDate.toISOString(),

@@ -4,7 +4,6 @@ import { AuthService } from '../services/auth.service';
 import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
-import { Team } from '../models/team';
 
 @Component({
   selector: 'app-home',
@@ -20,8 +19,9 @@ export class HomeComponent implements OnInit {
   private allChecked: boolean;
   private allTeamsChecked: boolean;
   private updateBody: boolean;
+  private countMeetings: boolean;
   private createTeamsMeeting: boolean;
-  private teams: Team[];
+  public mode:string;
 
   constructor(private eventService: EventService,
               private authService: AuthService,
@@ -32,6 +32,9 @@ export class HomeComponent implements OnInit {
     this.alertsService.removeAll();
     this.loading = false;
     this.setFormControls();
+
+    this.countMeetings = true;
+    this.createTeamsMeeting = false;
   }
 
   setFormControls() {
@@ -53,8 +56,13 @@ export class HomeComponent implements OnInit {
     if (!this.eventsWithEqualSubjectArray) {
       return;
     }
-    this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
-    this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody);
+
+    if(this.createTeamsMeeting){
+      this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
+    }
+    if(this.countMeetings){
+      this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody);
+    }
     this.reset();
   }
 
@@ -84,6 +92,11 @@ export class HomeComponent implements OnInit {
     for (const event of eventsWithEqualSubject.events) {
       event.teamsChecked = eventsWithEqualSubject.teamsChecked;
     }
+  }
+
+  onChangeTeams(teamsChecked: boolean){
+    this.createTeamsMeeting = teamsChecked;
+    this.countMeetings = !teamsChecked;
   }
 
   reset() {
@@ -163,12 +176,12 @@ export class HomeComponent implements OnInit {
     this.loading = loading;
   }
 
-  public get $teams() {
-    return this.teams;
+  public get $countMeetings() {
+    return this.countMeetings;
   }
 
-  public set $teams(teams: Team[]) {
-    this.teams = teams;
+  public set $countMeetings(countMeetings: boolean) {
+    this.countMeetings = countMeetings;
   }
 
   public get $createTeamsMeeting() {

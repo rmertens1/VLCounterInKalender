@@ -16,27 +16,26 @@
 
   <p>Hallo {{ $authService.user.displayName }}!</p>
   <div>
+    <!-- Date picker -->
+    <mat-form-field>
+      <mat-label>Startdatum</mat-label>
+      <input matInput [matDatepicker]="picker1" [formControl]="$startDateFormControl" readonly />
+      <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+      <mat-datepicker #picker1></mat-datepicker>
+    </mat-form-field>
 
-    <p>
-      <!-- Date picker -->
-      <mat-form-field>
-        <mat-label>Startdatum</mat-label>
-        <input matInput [matDatepicker]="picker1" [formControl]="$startDateFormControl" readonly />
-        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-        <mat-datepicker #picker1></mat-datepicker>
-      </mat-form-field>
+    <!-- Date picker -->
+    <mat-form-field>
+      <mat-label>Enddatum</mat-label>
+      <input matInput [matDatepicker]="picker2" [formControl]="$endDateFormControl" readonly />
+      <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+      <mat-datepicker #picker2></mat-datepicker>
+    </mat-form-field>
 
-      <!-- Date picker -->
-      <mat-form-field>
-        <mat-label>Enddatum</mat-label>
-        <input matInput [matDatepicker]="picker2" [formControl]="$endDateFormControl" readonly />
-        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-        <mat-datepicker #picker2></mat-datepicker>
-      </mat-form-field>
+    <mat-checkbox #teams [checked]="$createTeamsMeeting" (change)="onChangeTeams(teams.checked)">Modus: Ja = Teams, Nein
+      = Veranstaltungen zählen</mat-checkbox>
 
-      <mat-checkbox [checked]="$createTeamsMeeting" (change)="$createTeamsMeeting = !$createTeamsMeeting">Teams Meetings
-        erstellen</mat-checkbox>
-    </p>
+    <br>
     <!-- Fetch events -->
     <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">
       Hole Termine
@@ -50,35 +49,37 @@
 
   <div *ngIf="$eventsWithEqualSubjectArray">
     <div *ngIf="$eventsWithEqualSubjectArray.length > 0">
-      Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der
-      Termine in Ihrem Kalender hinzufügen?<br />
-      <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Ja!</mat-checkbox>
-      <br />
-
+      <div *ngIf="$countMeetings">
+        Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der
+        Termine in Ihrem Kalender hinzufügen?<br />
+        <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Ja!</mat-checkbox>
+        <br />
+      </div>
       <h1>Ihr Kalender</h1>
       <div class="row">
-        <div class="col-1">
+        <div class="col-1" *ngIf="$countMeetings">
           <b>Zählen</b><br />
           <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
         </div>
-        <div class="col-1">
+        <div class="col-1" *ngIf="$createTeamsMeeting">
           <b>Teams</b><br />
-          <mat-checkbox #allTeams [checked]="$allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)"></mat-checkbox>
+          <mat-checkbox #allTeams [checked]="$allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)">
+          </mat-checkbox>
         </div>
         <div class="col-7 ml-3"><b>Titel</b></div>
-        <div class="col-1"><b>Anzahl Zählen</b></div>
-        <div class="col-1"><b>Anzahl Teams</b></div>
+        <div class="col-1" *ngIf="$countMeetings"><b>Anzahl Zählen</b></div>
+        <div class="col-1" *ngIf="$createTeamsMeeting"><b>Anzahl Teams</b></div>
       </div>
 
       <div class="row" *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
-        <div class="col-1">
+        <div *ngIf="$countMeetings" class="col-1">
           <mat-checkbox [checked]="eventsWithEqualSubject.checked" (change)="
               eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked;
               checkAllSubEvents(eventsWithEqualSubject)
             ">
           </mat-checkbox>
         </div>
-        <div class="col-1">
+        <div class="col-1" *ngIf="$createTeamsMeeting">
           <mat-checkbox [checked]="eventsWithEqualSubject.teamsChecked" (change)="
               eventsWithEqualSubject.teamsChecked = !eventsWithEqualSubject.teamsChecked;
               teamsCheckAllSubEvents(eventsWithEqualSubject)
@@ -94,19 +95,21 @@
               </mat-expansion-panel-header>
               <table class="table table-responsive table-borderless">
                 <thead>
-                  <th scope="col">Zählen</th>
-                  <th scope="col">Teams</th>
+                  <th scope="col" *ngIf="$countMeetings">Zählen</th>
+                  <th scope="col" *ngIf="$createTeamsMeeting">Teams</th>
                   <th scope="col">Start</th>
                   <th scope="col">Ende</th>
+                  <th scope="col">Ort</th>
                 </thead>
                 <tbody>
                   <!-- Each row represents a single event -->
                   <tr *ngFor="let event of eventsWithEqualSubject.events">
-                    <td>
+                    <td *ngIf="$countMeetings">
                       <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox>
                     </td>
-                    <td>
-                      <mat-checkbox [checked]="event.teamsChecked" (change)="event.teamsChecked = !event.teamsChecked"></mat-checkbox>
+                    <td *ngIf="$createTeamsMeeting">
+                      <mat-checkbox [checked]="event.teamsChecked" (change)="event.teamsChecked = !event.teamsChecked">
+                      </mat-checkbox>
                     </td>
                     <td>
                       {{ $eventService.formatDateTimeTimeZone(event.start) }}
@@ -114,6 +117,7 @@
                     <td>
                       {{ $eventService.formatDateTimeTimeZone(event.end) }}
                     </td>
+                    <td>{{ event.location.displayName }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -121,15 +125,18 @@
           </mat-accordion>
         </div>
         <!-- Number of checked Events with this subject -->
-        <div class="col-1">
+        <div class="col-1" *ngIf="$countMeetings">
           {{ $eventService.getCheckedSubEventCount(eventsWithEqualSubject) }}
         </div>
-        <div class="col-1">
+        <div class="col-1" *ngIf="$createTeamsMeeting">
           {{ $eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) }}
         </div>
       </div>
-      <br />Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die
-      Hilfe!<br />
+      <br />
+      <div *ngIf="$countMeetings">
+        Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die
+        Hilfe!<br />
+      </div>
       <!-- Submit -->
       <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
         Termine aktualisieren
