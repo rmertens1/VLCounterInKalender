@@ -106,6 +106,14 @@ export class EventService {
     return count;
   }
 
+  public getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): number{
+    let count = 0;
+    for (const eventsWithEqualSubject of eventsWithEqualSubjectArray){
+      count += this.getTeamsCheckedSubEventCount(eventsWithEqualSubject);
+    }
+    return count;
+  }
+
   public formatDateTimeTimeZone(dateTime: DateTimeTimeZone): string {
     const date = moment.tz(dateTime.dateTime, dateTime.timeZone).format('DD.MM HH:mm');;
     if (date === 'Invalid date') {

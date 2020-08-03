@@ -132,10 +132,26 @@
           {{ $eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) }}
         </div>
       </div>
-      <br />
+      <br /><br /><br />
       <div *ngIf="$countMeetings">
         Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die
         Hilfe!<br />
+      </div>
+      <div *ngIf="$createTeamsMeeting">
+        <div *ngIf="$eventService.getAllEventsTeamsCheckedCount($eventsWithEqualSubjectArray) > 0">
+          <h4>Teilnehmerlisten:</h4>
+          <div *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
+            <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0" >
+              <div class="col-8">
+                {{eventsWithEqualSubject.events[0].subject}}
+              </div>
+              <div class="col-4">
+                TODO: Fileupload
+              </div>
+              <hr>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- Submit -->
       <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
