@@ -4,6 +4,7 @@ import { AlertsService } from './alerts.service';
 import { AuthService } from './auth.service';
 import { Event } from '../models/event';
 import { AlertType } from '../models/alertType.enum';
+import { User } from '../models/user';
 
 
 @Injectable({
@@ -45,7 +46,7 @@ export class GraphService {
           enddatetime: endDate.toISOString()
         })
         .top(999)
-        .header('Prefer','outlook.timezone="Europe/Berlin"')
+        .header('Prefer', 'outlook.timezone="Europe/Berlin"')
         .get();
 
       return result.value;
@@ -78,6 +79,19 @@ export class GraphService {
       this.alertsService.add(`Veranstaltung ${event.subject} konnte nicht erstellt werden.  Bitte versuchen Sie es erneut.`,
         JSON.stringify(error, null, 2), AlertType.danger);
       return false;
+    }
+  }
+
+  async getUser(userEmail: string): Promise<User> {
+    try {
+      const result = await this.graphClient
+        .api(`/users/${userEmail}`)
+        .get()
+      return result;
+    } catch (error) {
+      this.alertsService.add(`Benutzer ${userEmail} konnte nicht gefunden werden.`,
+        JSON.stringify(error, null, 2), AlertType.danger);
+      return null;
     }
   }
 }

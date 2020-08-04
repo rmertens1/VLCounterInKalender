@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +26,8 @@ export class HomeComponent implements OnInit {
 
   constructor(private eventService: EventService,
               private authService: AuthService,
-              private alertsService: AlertsService) {
+              private alertsService: AlertsService,
+              private userService: UserService) {
   }
 
   ngOnInit() {
@@ -35,6 +37,8 @@ export class HomeComponent implements OnInit {
 
     this.countMeetings = true;
     this.createTeamsMeeting = false;
+    let emails = this.userService.getEmailsByNames(['Adler, Niklas','Arokyanathar, Abisha Shruthi','Betger, Nico','Völschow, Thorge','Schulze Temming-Hanhoff, Marc','Fochler, Chris-Jean','Kwoczek, René','Madžarević, Dario']);
+    console.log(emails);
   }
 
   setFormControls() {
