@@ -146,7 +146,7 @@
                 {{eventsWithEqualSubject.events[0].subject}}
               </div>
               <div class="col-4">
-                TODO: Fileupload
+                <button mat-flat-button color="green" (click)="importAttendeesBtn_onClicked(eventsWithEqualSubject)" [disabled]="eventsWithEqualSubject.teamsAttendees">Teilnehmer importieren</button>
               </div>
               <hr>
             </div>
@@ -154,7 +154,10 @@
         </div>
       </div>
       <!-- Submit -->
-      <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
+      <button *ngIf="$countMeetings" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
+        Termine aktualisieren
+      </button>
+      <button *ngIf="$createTeamsMeeting" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()" [disabled]="!allImported()">
         Termine aktualisieren
       </button>
     </div>

@@ -5,6 +5,8 @@ import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { UserService } from '../services/user.service';
+import { EmailAddress, Attendee } from '../models/event';
+import { exit } from 'process';
 
 @Component({
   selector: 'app-home',
@@ -22,12 +24,12 @@ export class HomeComponent implements OnInit {
   private updateBody: boolean;
   private countMeetings: boolean;
   private createTeamsMeeting: boolean;
-  public mode:string;
+  public mode: string;
 
   constructor(private eventService: EventService,
-              private authService: AuthService,
-              private alertsService: AlertsService,
-              private userService: UserService) {
+    private authService: AuthService,
+    private alertsService: AlertsService,
+    private userService: UserService) {
   }
 
   ngOnInit() {
@@ -37,7 +39,7 @@ export class HomeComponent implements OnInit {
 
     this.countMeetings = true;
     this.createTeamsMeeting = false;
-    let emails = this.userService.getEmailsByNames(['Adler, Niklas','Arokyanathar, Abisha Shruthi','Betger, Nico','Völschow, Thorge','Schulze Temming-Hanhoff, Marc','Fochler, Chris-Jean','Kwoczek, René','Madžarević, Dario']);
+    let emails = this.userService.getEmailsByNames(['Adler, Niklas', 'Arokyanathar, Abisha Shruthi', 'Betger, Nico', 'Völschow, Thorge', 'Schulze Temming-Hanhoff, Marc', 'Fochler, Chris-Jean', 'Kwoczek, René', 'Madžarević, Dario']);
     console.log(emails);
   }
 
@@ -61,13 +63,40 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    if(this.createTeamsMeeting){
+    if (this.createTeamsMeeting) {
       this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
     }
-    if(this.countMeetings){
+    if (this.countMeetings) {
       this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody);
     }
     this.reset();
+  }
+
+  importAttendeesBtn_onClicked(eventsWithEqualSubject: EventsWithEqualSubject) {
+    // TODO: read names from word file
+    const names = ['Schmidtke, Julian'];
+
+    const emails = this.userService.getEmailsByNames(names);
+
+    let attendees: Attendee[] = [];
+    for (const email of emails) {
+      const emailAddress: EmailAddress = new EmailAddress();
+      emailAddress.address = email;
+      const attendee: Attendee = new Attendee();
+      attendee.emailAddress = emailAddress;
+      attendees = attendees.concat(attendee);
+    }
+    eventsWithEqualSubject.teamsAttendees = attendees;
+  }
+
+  allImported(): boolean {
+    let allImported: boolean = true;
+    for (const eventsWithEqualSubject of this.eventsWithEqualSubjectArray) {
+      if (this.eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0 && !eventsWithEqualSubject.teamsAttendees) {
+        allImported = false;
+      }
+    }
+    return allImported;
   }
 
   checkAll(checked: boolean) {
@@ -98,7 +127,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onChangeTeams(teamsChecked: boolean){
+  onChangeTeams(teamsChecked: boolean) {
     this.createTeamsMeeting = teamsChecked;
     this.countMeetings = !teamsChecked;
   }

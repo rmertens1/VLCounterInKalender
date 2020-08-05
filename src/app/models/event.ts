@@ -30,12 +30,10 @@ export class DateTimeTimeZone {
 
 export class Attendee {
   emailAddress: EmailAddress;
-  type: string;
 }
 
 export class EmailAddress{
   address: string;
-  name: string;
 }
 
 export class Location{
