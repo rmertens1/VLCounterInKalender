@@ -86,13 +86,13 @@ export class HomeComponent implements OnInit {
       attendee.emailAddress = emailAddress;
       attendees = attendees.concat(attendee);
     }
-    eventsWithEqualSubject.teamsAttendees = attendees;
+    eventsWithEqualSubject.attendees = attendees;
   }
 
   allImported(): boolean {
     let allImported: boolean = true;
     for (const eventsWithEqualSubject of this.eventsWithEqualSubjectArray) {
-      if (this.eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0 && !eventsWithEqualSubject.teamsAttendees) {
+      if (this.eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0 && !eventsWithEqualSubject.attendees) {
         allImported = false;
       }
     }

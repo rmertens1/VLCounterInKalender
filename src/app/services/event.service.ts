@@ -56,7 +56,7 @@ export class EventService {
     let diff = (secondDate.valueOf() - firstDate.valueOf());
 
     // Under 1 hours diff
-    return (diff / 60000 < 60);
+    return (diff / 60000 <= 60);
   }
 
   public createTeamsEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): boolean {
@@ -94,7 +94,7 @@ export class EventService {
           teamsEvent.body = event.body;
           teamsEvent.isOnlineMeeting = true;
           teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
-          teamsEvent.attendees = eventsWithEqualSubject.teamsAttendees;
+          teamsEvent.attendees = eventsWithEqualSubject.attendees;
 
           this.graphService.createEvent(teamsEvent);
         }

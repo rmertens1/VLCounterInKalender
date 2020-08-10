@@ -4,5 +4,5 @@ export class EventsWithEqualSubject {
   events: Event[];
   checked = false;
   teamsChecked = false;
-  teamsAttendees: Attendee[];
+  attendees: Attendee[];
 }
