@@ -12,7 +12,7 @@ import * as moment from 'moment-timezone';
 export class EventService {
 
   constructor(private graphService: GraphService,
-              private alertsService: AlertsService) { }
+    private alertsService: AlertsService) { }
 
   // Regex
   private eventCounterRemovalRegex: RegExp = /(\(\d*\/\d*\))*/gi;
@@ -50,15 +50,40 @@ export class EventService {
     return true;
   }
 
+  areAfterAnother(xEvent: Event, event: Event): boolean {
+    let firstDate: Date = new Date(xEvent.end.dateTime);
+    let secondDate: Date = new Date(event.start.dateTime);
+    let diff = (secondDate.valueOf() - firstDate.valueOf());
+
+    // Under 1 hours diff
+    return (diff/60000 < 60);
+  }
+
   public createTeamsEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): boolean {
     if (!eventsWithEqualSubjectArray) {
       return false;
     }
 
     for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
-      for(const event of eventsWithEqualSubject.events){
-        if(event.teamsChecked){
-          let teamsEvent : Event = new Event();
+      let xEvent: Event;
+      for (let event of eventsWithEqualSubject.events) {
+        if (xEvent.teamsChecked && event.teamsChecked) {
+          if (this.areAfterAnother(xEvent, event)) {
+            xEvent.end = event.end;
+            event = undefined;
+          } else {
+            xEvent = event;
+          }
+        } else {
+          xEvent = event;
+        }
+      }
+    }
+
+    for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
+      for (const event of eventsWithEqualSubject.events) {
+        if (event.teamsChecked) {
+          let teamsEvent: Event = new Event();
           teamsEvent.subject = '(TEAMS) ' + event.subject;
           teamsEvent.start = event.start;
           teamsEvent.end = event.end;
@@ -102,9 +127,9 @@ export class EventService {
     return count;
   }
 
-  public getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): number{
+  public getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): number {
     let count = 0;
-    for (const eventsWithEqualSubject of eventsWithEqualSubjectArray){
+    for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
       count += this.getTeamsCheckedSubEventCount(eventsWithEqualSubject);
     }
     return count;
