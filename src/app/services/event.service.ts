@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from './graph.service';
-import { Event, DateTimeTimeZone, Attendee } from '../models/event';
+import { Event, DateTimeTimeZone } from '../models/event';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { AlertsService } from './alerts.service';
 import { AlertType } from '../models/alertType.enum';
@@ -56,7 +56,7 @@ export class EventService {
     let diff = (secondDate.valueOf() - firstDate.valueOf());
 
     // Under 1 hours diff
-    return (diff/60000 < 60);
+    return (diff / 60000 < 60);
   }
 
   public createTeamsEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): boolean {
@@ -67,10 +67,14 @@ export class EventService {
     for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
       let xEvent: Event;
       for (let event of eventsWithEqualSubject.events) {
-        if (xEvent.teamsChecked && event.teamsChecked) {
-          if (this.areAfterAnother(xEvent, event)) {
-            xEvent.end = event.end;
-            event = undefined;
+        if (xEvent) {
+          if (xEvent.teamsChecked && event.teamsChecked) {
+            if (this.areAfterAnother(xEvent, event)) {
+              xEvent.end = event.end;
+              event.teamsChecked = false;
+            } else {
+              xEvent = event;
+            }
           } else {
             xEvent = event;
           }
