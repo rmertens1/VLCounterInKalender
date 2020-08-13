@@ -141,12 +141,12 @@
         <div *ngIf="$eventService.getAllEventsTeamsCheckedCount($eventsWithEqualSubjectArray) > 0">
           <h4>Teilnehmerlisten:</h4>
           <div *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
-            <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0" >
+            <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0">
               <div class="col-8">
                 {{eventsWithEqualSubject.events[0].subject}}
               </div>
-              <div class="col-4">
-                <button mat-flat-button color="green" (click)="importAttendeesBtn_onClicked(eventsWithEqualSubject)" [disabled]="eventsWithEqualSubject.teamsAttendees">Teilnehmer importieren</button>
+              <div class="col-4 form-group">
+                <input type="file" id="file" (change)="handleFileInput(eventsWithEqualSubject, $event.target.files)">
               </div>
               <hr>
             </div>
@@ -157,7 +157,8 @@
       <button *ngIf="$countMeetings" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
         Termine aktualisieren
       </button>
-      <button *ngIf="$createTeamsMeeting" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()" [disabled]="!allImported()">
+      <button *ngIf="$createTeamsMeeting" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()"
+        [disabled]="!allImported()">
         Termine aktualisieren
       </button>
     </div>

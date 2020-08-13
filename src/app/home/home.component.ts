@@ -99,6 +99,15 @@ export class HomeComponent implements OnInit {
     return allImported;
   }
 
+  handleFileInput(eventsWithEqualSubject: EventsWithEqualSubject, files: FileList) {
+    const file: File = files.item(0);
+    this.loadDocx(file);
+  }
+
+  loadDocx(file: File) {
+
+  }
+
   checkAll(checked: boolean) {
     this.allChecked = checked;
     for (const eventsWithEqualSubject of this.eventsWithEqualSubjectArray) {
