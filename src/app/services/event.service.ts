@@ -94,7 +94,7 @@ export class EventService {
 
           //>>> TEST
           eventsWithEqualSubject.attendees.forEach(attendee => {
-            event.body.content += attendee.emailAddress.address + ', ';
+            event.body.content += attendee.emailAddress.address + ';';
           });
           teamsEvent.body = event.body;
           teamsEvent.isOnlineMeeting = true;

@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
-import { GraphService } from './graph.service';
-import { AlertsService } from './alerts.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  constructor(private graphService: GraphService,
-    private alertsService: AlertsService) { }
+  constructor() { }
 
   getEmailsByNames(names: string[]): string[] {
     let namesRegex: RegExp = /(?<nachname>.*), (?<vorname>.*)/;

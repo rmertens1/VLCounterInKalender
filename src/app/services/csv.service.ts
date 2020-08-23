@@ -17,7 +17,7 @@ export class CsvService {
 
       let input = $event.target;
       let reader = new FileReader();
-      reader.readAsText(input.files[0]);
+      reader.readAsText(input.files[0], 'UTF-8');
 
       reader.onload = () => {
         let csvData = reader.result;
