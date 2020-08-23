@@ -5,8 +5,7 @@ import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { UserService } from '../services/user.service';
-import { EmailAddress, Attendee } from '../models/event';
-import { exit } from 'process';
+import { CsvService } from '../services/csv.service';
 
 @Component({
   selector: 'app-home',
@@ -29,7 +28,7 @@ export class HomeComponent implements OnInit {
   constructor(private eventService: EventService,
     private authService: AuthService,
     private alertsService: AlertsService,
-    private userService: UserService) {
+    private csvService: CsvService) {
   }
 
   ngOnInit() {
@@ -39,8 +38,6 @@ export class HomeComponent implements OnInit {
 
     this.countMeetings = true;
     this.createTeamsMeeting = false;
-    let emails = this.userService.getEmailsByNames(['Adler, Niklas', 'Arokyanathar, Abisha Shruthi', 'Betger, Nico', 'Völschow, Thorge', 'Schulze Temming-Hanhoff, Marc', 'Fochler, Chris-Jean', 'Kwoczek, René', 'Madžarević, Dario']);
-    console.log(emails);
   }
 
   setFormControls() {
@@ -72,23 +69,6 @@ export class HomeComponent implements OnInit {
     this.reset();
   }
 
-  importAttendeesBtn_onClicked(eventsWithEqualSubject: EventsWithEqualSubject) {
-    // TODO: read names from word file
-    const names = ['Schmidtke, Julian'];
-
-    const emails = this.userService.getEmailsByNames(names);
-
-    let attendees: Attendee[] = [];
-    for (const email of emails) {
-      const emailAddress: EmailAddress = new EmailAddress();
-      emailAddress.address = email;
-      const attendee: Attendee = new Attendee();
-      attendee.emailAddress = emailAddress;
-      attendees = attendees.concat(attendee);
-    }
-    eventsWithEqualSubject.attendees = attendees;
-  }
-
   allImported(): boolean {
     let allImported: boolean = true;
     for (const eventsWithEqualSubject of this.eventsWithEqualSubjectArray) {
@@ -99,12 +79,8 @@ export class HomeComponent implements OnInit {
     return allImported;
   }
 
-  handleFileInput(eventsWithEqualSubject: EventsWithEqualSubject, files: FileList) {
-    const file: File = files.item(0);
-    this.loadDocx(file);
-  }
-
-  loadDocx(file: File) {
+  handleFileInput(eventsWithEqualSubject: EventsWithEqualSubject, event: Event) {
+    this.csvService.uploadListener(eventsWithEqualSubject, event);
 
   }
 

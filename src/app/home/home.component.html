@@ -142,11 +142,16 @@
           <h4>Teilnehmerlisten:</h4>
           <div *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
             <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0">
-              <div class="col-8">
+              <div class="col-7">
                 {{eventsWithEqualSubject.events[0].subject}}
               </div>
+              <div class="col-1">
+                <div *ngIf="eventsWithEqualSubject.attendees">
+                  {{eventsWithEqualSubject.attendees.length}}
+                </div>
+              </div>
               <div class="col-4 form-group">
-                <input type="file" id="file" (change)="handleFileInput(eventsWithEqualSubject, $event.target.files)">
+                <input type="file" id="file" (change)="handleFileInput(eventsWithEqualSubject, $event)">
               </div>
               <hr>
             </div>

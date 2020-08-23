@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from './graph.service';
-import { Event, DateTimeTimeZone } from '../models/event';
+import { Event, DateTimeTimeZone, Attendee, EmailAddress } from '../models/event';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { AlertsService } from './alerts.service';
 import { AlertType } from '../models/alertType.enum';
@@ -91,10 +91,27 @@ export class EventService {
           teamsEvent.subject = '(TEAMS) ' + event.subject;
           teamsEvent.start = event.start;
           teamsEvent.end = event.end;
+
+          //>>> TEST
+          eventsWithEqualSubject.attendees.forEach(attendee => {
+            event.body.content += attendee.emailAddress.address + ', ';
+          });
           teamsEvent.body = event.body;
           teamsEvent.isOnlineMeeting = true;
           teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
-          teamsEvent.attendees = eventsWithEqualSubject.attendees;
+
+
+          let attendees : Attendee[] = [];
+          const emailAddress: EmailAddress = new EmailAddress();
+          emailAddress.address = 'julian.schmidtke@hsw-stud.de';
+          const attendee: Attendee = new Attendee();
+          attendee.emailAddress = emailAddress;
+          attendees = attendees.concat(attendee);
+
+          teamsEvent.attendees = attendees;
+          //<<< TEST
+
+          // teamsEvent.attendees = eventsWithEqualSubject.attendees;
 
           this.graphService.createEvent(teamsEvent);
         }
