@@ -43,8 +43,8 @@ export class EventService {
       this.graphService.updateEvent(event);
     }
     this.alertsService.add(
-      'Veranstaltungen erfolgreich aktualisiert.',
-      `${renamedEvents.length} Veranstaltungen wurden erfolgreich aktualisiert. Sie können diese nun in Ihrem Kalender nachschlagen.`,
+      'Veranstaltungen erfolgreich übermittelt.',
+      `${renamedEvents.length} Veranstaltungen wurden erfolgreich an Outlook übertragen. Sie können diese bald in Ihrem Kalender nachschlagen. Je nach Anzahl der Termine kann dies einige Minuten dauern.`,
       AlertType.success
     );
     return true;
@@ -101,7 +101,7 @@ export class EventService {
           teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
 
 
-          let attendees : Attendee[] = [];
+          let attendees: Attendee[] = [];
           const emailAddress: EmailAddress = new EmailAddress();
           emailAddress.address = 'julian.schmidtke@hsw-stud.de';
           const attendee: Attendee = new Attendee();
