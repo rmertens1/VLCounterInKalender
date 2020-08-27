@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MsalModule } from '@azure/msal-angular';
@@ -19,7 +19,7 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
     AppComponent,
     NavBarComponent,
     HomeComponent,
-      AlertsComponent
+    AlertsComponent
   ],
   imports: [
     BrowserModule,
@@ -31,7 +31,8 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
     }),
     BrowserAnimationsModule,
     AngularMaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

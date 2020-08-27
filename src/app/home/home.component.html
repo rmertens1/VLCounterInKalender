@@ -32,10 +32,16 @@
       <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
 
-    <mat-checkbox #teams [checked]="$createTeamsMeeting" (change)="onChangeTeams(teams.checked)">Modus: Ja = Teams, Nein
-      = Veranstaltungen zählen</mat-checkbox>
+    <!-- Choose current mode -->
+    <mat-form-field appearance="fill">
+      <mat-label>Modus</mat-label>
+      <mat-select [(ngModel)]="selectedMode" name="mode">
+        <mat-option *ngFor="let mode of modes" [value]="mode.value">
+          {{mode.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-    <br>
     <!-- Fetch events -->
     <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">
       Hole Termine
@@ -49,37 +55,38 @@
 
   <div *ngIf="$eventsWithEqualSubjectArray">
     <div *ngIf="$eventsWithEqualSubjectArray.length > 0">
-      <div *ngIf="$countMeetings">
+      <div *ngIf="isModeCountMeetings()">
         Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der
         Termine in Ihrem Kalender hinzufügen?<br />
         <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Ja!</mat-checkbox>
-        <br />
+        <br /><br>
       </div>
+      <div *ngIf="!isModeCountMeetings()"><br><br><br></div>
       <h1>Ihr Kalender</h1>
       <div class="row">
-        <div class="col-1" *ngIf="$countMeetings">
+        <div class="col-1" *ngIf="isModeCountMeetings()">
           <b>Zählen</b><br />
           <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
         </div>
-        <div class="col-1" *ngIf="$createTeamsMeeting">
+        <div class="col-1" *ngIf="isModeTeams()">
           <b>Teams</b><br />
           <mat-checkbox #allTeams [checked]="$allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)">
           </mat-checkbox>
         </div>
         <div class="col-7 ml-3"><b>Titel</b></div>
-        <div class="col-1" *ngIf="$countMeetings"><b>Anzahl Zählen</b></div>
-        <div class="col-1" *ngIf="$createTeamsMeeting"><b>Anzahl Teams</b></div>
+        <div class="col-1" *ngIf="isModeCountMeetings()"><b>Anzahl Zählen</b></div>
+        <div class="col-1" *ngIf="isModeTeams()"><b>Anzahl Teams</b></div>
       </div>
 
       <div class="row" *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
-        <div *ngIf="$countMeetings" class="col-1">
+        <div *ngIf="isModeCountMeetings()" class="col-1">
           <mat-checkbox [checked]="eventsWithEqualSubject.checked" (change)="
               eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked;
               checkAllSubEvents(eventsWithEqualSubject)
             ">
           </mat-checkbox>
         </div>
-        <div class="col-1" *ngIf="$createTeamsMeeting">
+        <div class="col-1" *ngIf="isModeTeams()">
           <mat-checkbox [checked]="eventsWithEqualSubject.teamsChecked" (change)="
               eventsWithEqualSubject.teamsChecked = !eventsWithEqualSubject.teamsChecked;
               teamsCheckAllSubEvents(eventsWithEqualSubject)
@@ -95,8 +102,8 @@
               </mat-expansion-panel-header>
               <table class="table table-responsive table-borderless">
                 <thead>
-                  <th scope="col" *ngIf="$countMeetings">Zählen</th>
-                  <th scope="col" *ngIf="$createTeamsMeeting">Teams</th>
+                  <th scope="col" *ngIf="isModeCountMeetings()">Zählen</th>
+                  <th scope="col" *ngIf="isModeTeams()">Teams</th>
                   <th scope="col">Start</th>
                   <th scope="col">Ende</th>
                   <th scope="col">Ort</th>
@@ -104,10 +111,10 @@
                 <tbody>
                   <!-- Each row represents a single event -->
                   <tr *ngFor="let event of eventsWithEqualSubject.events">
-                    <td *ngIf="$countMeetings">
+                    <td *ngIf="isModeCountMeetings()">
                       <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox>
                     </td>
-                    <td *ngIf="$createTeamsMeeting">
+                    <td *ngIf="isModeTeams()">
                       <mat-checkbox [checked]="event.teamsChecked" (change)="event.teamsChecked = !event.teamsChecked">
                       </mat-checkbox>
                     </td>
@@ -125,19 +132,19 @@
           </mat-accordion>
         </div>
         <!-- Number of checked Events with this subject -->
-        <div class="col-1" *ngIf="$countMeetings">
+        <div class="col-1" *ngIf="isModeCountMeetings()">
           {{ $eventService.getCheckedSubEventCount(eventsWithEqualSubject) }}
         </div>
-        <div class="col-1" *ngIf="$createTeamsMeeting">
+        <div class="col-1" *ngIf="isModeTeams()">
           {{ $eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) }}
         </div>
       </div>
       <br /><br /><br />
-      <div *ngIf="$countMeetings">
+      <div *ngIf="isModeCountMeetings()">
         Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die
         Hilfe!<br />
       </div>
-      <div *ngIf="$createTeamsMeeting">
+      <div *ngIf="isModeTeams()">
         <div *ngIf="$eventService.getAllEventsTeamsCheckedCount($eventsWithEqualSubjectArray) > 0">
           <h4>Teilnehmerlisten:</h4>
           <div *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
@@ -159,10 +166,10 @@
         </div>
       </div>
       <!-- Submit -->
-      <button *ngIf="$countMeetings" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
+      <button *ngIf="isModeCountMeetings()" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
         Termine aktualisieren
       </button>
-      <button *ngIf="$createTeamsMeeting" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()"
+      <button *ngIf="isModeTeams()" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()"
         [disabled]="!allImported()">
         Termine aktualisieren
       </button>

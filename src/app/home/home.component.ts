@@ -7,6 +7,11 @@ import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { UserService } from '../services/user.service';
 import { CsvService } from '../services/csv.service';
 
+interface Mode {
+  value: string;
+  viewValue: string;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -21,8 +26,13 @@ export class HomeComponent implements OnInit {
   private allChecked: boolean;
   private allTeamsChecked: boolean;
   private updateBody: boolean;
-  private countMeetings: boolean;
-  private createTeamsMeeting: boolean;
+
+  selectedMode: string = 'count';
+  modes: Mode[] = [
+    { value: 'count', viewValue: 'Veranstaltungen zählen' },
+    { value: 'teams', viewValue: 'Teams Termine anlegen' }
+  ]
+
   public mode: string;
 
   constructor(private eventService: EventService,
@@ -35,9 +45,14 @@ export class HomeComponent implements OnInit {
     this.alertsService.removeAll();
     this.loading = false;
     this.setFormControls();
+  }
 
-    this.countMeetings = true;
-    this.createTeamsMeeting = false;
+  public isModeCountMeetings(): boolean {
+    return this.selectedMode == 'count';
+  }
+
+  public isModeTeams(): boolean {
+    return this.selectedMode == 'teams';
   }
 
   setFormControls() {
@@ -51,7 +66,7 @@ export class HomeComponent implements OnInit {
     this.alertsService.removeAll();
     this.reset();
     this.loading = true;
-    this.eventsWithEqualSubjectArray = await this.eventService.getEvents(this.startDateFormControl.value, this.endDateFormControl.value, this.countMeetings);
+    this.eventsWithEqualSubjectArray = await this.eventService.getEvents(this.startDateFormControl.value, this.endDateFormControl.value, this.isModeCountMeetings());
     this.loading = false;
   }
 
@@ -60,10 +75,10 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    if (this.createTeamsMeeting) {
+    if (this.isModeTeams()) {
       this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
     }
-    if (this.countMeetings) {
+    if (this.isModeCountMeetings()) {
       this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody);
     }
     this.reset();
@@ -112,10 +127,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  onChangeTeams(teamsChecked: boolean) {
-    this.createTeamsMeeting = teamsChecked;
-    this.countMeetings = !teamsChecked;
-  }
 
   reset() {
     this.eventsWithEqualSubjectArray = undefined;
@@ -192,22 +203,6 @@ export class HomeComponent implements OnInit {
 
   public set $loading(loading: boolean) {
     this.loading = loading;
-  }
-
-  public get $countMeetings() {
-    return this.countMeetings;
-  }
-
-  public set $countMeetings(countMeetings: boolean) {
-    this.countMeetings = countMeetings;
-  }
-
-  public get $createTeamsMeeting() {
-    return this.createTeamsMeeting;
-  }
-
-  public set $createTeamsMeeting(createTeamsMeeting: boolean) {
-    this.createTeamsMeeting = createTeamsMeeting;
   }
 
   public get $allTeamsChecked() {
