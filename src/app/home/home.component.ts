@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit {
     this.alertsService.removeAll();
     this.reset();
     this.loading = true;
-    this.eventsWithEqualSubjectArray = await this.eventService.getEvents(this.startDateFormControl.value, this.endDateFormControl.value);
+    this.eventsWithEqualSubjectArray = await this.eventService.getEvents(this.startDateFormControl.value, this.endDateFormControl.value, this.countMeetings);
     this.loading = false;
   }
 

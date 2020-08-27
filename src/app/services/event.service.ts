@@ -20,13 +20,15 @@ export class EventService {
   private regexHSWEventSubjectDualRegex: RegExp = /.*\d{2}\/\d{2} - \d{1}.*/gi;
   private regexHSWEventSubjectMBARegex: RegExp = /.*\d{2}\/\d{2} MBA\d{2}.*/gi;
 
-  public async getEvents(startDate: Date, endDate: Date): Promise<EventsWithEqualSubject[]> {
+  public async getEvents(startDate: Date, endDate: Date, removeSingleEvents = true): Promise<EventsWithEqualSubject[]> {
     const eventsWithEqualSubjectArray = await this.graphService.getEvents(startDate, endDate)
       .then((events) => {
         events = this.removeEventCounter(events);
         events = this.removeOtherEvents(events);
         let lEventsWithEqualSubjectArray = this.sortEvents(events);
-        lEventsWithEqualSubjectArray = this.removeSingleEvents(lEventsWithEqualSubjectArray);
+        if (removeSingleEvents) {
+          lEventsWithEqualSubjectArray = this.removeSingleEvents(lEventsWithEqualSubjectArray);
+        }
         return lEventsWithEqualSubjectArray;
       });
     return eventsWithEqualSubjectArray;
