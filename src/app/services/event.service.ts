@@ -16,6 +16,7 @@ export class EventService {
 
   // Regex
   private eventCounterRemovalRegex: RegExp = /(\(\d*\/\d*\))*/gi;
+  private regexHSWEventSubjectFirstSemester: RegExp = /.*\d{2}\/\d{2}.*/;
   private regexHSWEventSubjectDualRegex: RegExp = /.*\d{2}\/\d{2} - \d{1}.*/gi;
   private regexHSWEventSubjectMBARegex: RegExp = /.*\d{2}\/\d{2} MBA\d{2}.*/gi;
 
@@ -179,7 +180,9 @@ export class EventService {
     const newEvents: Event[] = [];
     for (const event of events) {
       // Comparison to check if the subject of an event matches the pattern the HSW uses
-      if ((event.subject.match(this.regexHSWEventSubjectDualRegex)) || (event.subject.match(this.regexHSWEventSubjectMBARegex))) {
+      if ((event.subject.match(this.regexHSWEventSubjectDualRegex)) ||
+        (event.subject.match(this.regexHSWEventSubjectMBARegex)) ||
+        (event.subject.match(this.regexHSWEventSubjectFirstSemester))) {
         newEvents.push(event);
       }
     }
