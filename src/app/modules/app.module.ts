@@ -12,6 +12,7 @@ import { HomeComponent } from '../home/home.component';
 import { AppRoutingModule } from '../modules/app-routing.module';
 import { AngularMaterialModule } from '../modules/material.module';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
+import { HelpComponent } from '../Help/Help.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { NavBarComponent } from '../nav-bar/nav-bar.component';
     AppComponent,
     NavBarComponent,
     HomeComponent,
-    AlertsComponent
+    AlertsComponent,
+    HelpComponent
   ],
   imports: [
     BrowserModule,
