@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { Client } from '@microsoft/microsoft-graph-client';
 import { AlertsService } from './alerts.service';
 import { AuthService } from './auth.service';
-import { Event } from '../models/event';
+import { Event, OutlookCategory } from '../models/event';
 import { AlertType } from '../models/alertType.enum';
-import { User } from '../models/user';
 
 
 @Injectable({
@@ -39,7 +38,7 @@ export class GraphService {
     try {
       const result = await this.graphClient
         .api('/me/calendarview')
-        .select('id,subject,body,start,end,location')
+        .select('id,subject,body,start,end,location,categories')
         .orderby('start/dateTime ASC')
         .query({
           startdatetime: startDate.toISOString(),
@@ -97,18 +96,18 @@ export class GraphService {
     }
   }
 
-  async getUser(userEmail: string): Promise<User> {
+  async getOutlookCategories(): Promise<OutlookCategory[]> {
     try {
       const result = await this.graphClient
-        .api(`/users/${userEmail}`)
+        .api(`/me/outlook/masterCategories/`)
         .get()
-      return result;
+      return result.value;
     } catch (error) {
       if (error.statusCode == 429) {
         await this.delay(100);
-        return this.getUser(userEmail);
+        return this.getOutlookCategories();
       } else {
-        this.alertsService.add(`Benutzer ${userEmail} konnte nicht gefunden werden.`,
+        this.alertsService.add(`Kategorien konnten nicht geladen werden.`,
           JSON.stringify(error, null, 2), AlertType.danger);
         return null;
       }

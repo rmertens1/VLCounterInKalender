@@ -4,8 +4,8 @@ import { AuthService } from '../services/auth.service';
 import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
-import { UserService } from '../services/user.service';
 import { CsvService } from '../services/csv.service';
+import { OutlookCategory } from '../models/event';
 
 interface Mode {
   value: string;
@@ -32,6 +32,8 @@ export class HomeComponent implements OnInit {
     { value: 'count', viewValue: 'Veranstaltungen zählen' },
     { value: 'teams', viewValue: 'Teams Termine anlegen' }
   ]
+
+  public outlookCategories: OutlookCategory[] = [];
 
   public mode: string;
 
@@ -66,6 +68,7 @@ export class HomeComponent implements OnInit {
     this.alertsService.removeAll();
     this.reset();
     this.loading = true;
+    this.outlookCategories = await this.eventService.getOutlookCategories();
     this.eventsWithEqualSubjectArray = await this.eventService.getEvents(this.startDateFormControl.value, this.endDateFormControl.value, this.isModeCountMeetings());
     this.loading = false;
   }

@@ -96,6 +96,17 @@
         <div class="col-7">
           <mat-accordion>
             <mat-expansion-panel class="mat-elevation-z0">
+              <mat-accordion>
+                <mat-expansion-panel class="mat-elevation">
+                  <mat-expansion-panel-header>
+                    Kategorien
+                  </mat-expansion-panel-header>
+                  <div *ngFor="let category of outlookCategories">
+                    <mat-checkbox>{{category.displayName}}</mat-checkbox>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+
               <!-- Subject of the first event, since they all are the same -->
               <mat-expansion-panel-header>
                 {{ eventsWithEqualSubject.events[0].subject }}
@@ -139,11 +150,8 @@
           {{ $eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) }}
         </div>
       </div>
-      <br /><br /><br />
-      <div *ngIf="isModeCountMeetings()">
-        Es wurden nicht alle Termine korrekt verbunden? Schauen Sie in die
-        Hilfe!<br />
-      </div>
+      <br />
+      Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!<br />
       <div *ngIf="isModeTeams()">
         <div *ngIf="$eventService.getAllEventsTeamsCheckedCount($eventsWithEqualSubjectArray) > 0">
           <h4>Teilnehmerlisten:</h4>

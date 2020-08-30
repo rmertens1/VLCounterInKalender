@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GraphService } from './graph.service';
-import { Event, DateTimeTimeZone, Attendee, EmailAddress } from '../models/event';
+import { Event, DateTimeTimeZone, Attendee, EmailAddress, OutlookCategory } from '../models/event';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { AlertsService } from './alerts.service';
 import { AlertType } from '../models/alertType.enum';
@@ -32,6 +32,10 @@ export class EventService {
         return lEventsWithEqualSubjectArray;
       });
     return eventsWithEqualSubjectArray;
+  }
+
+  public async getOutlookCategories(){
+    return await this.graphService.getOutlookCategories();
   }
 
   public updateEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[], updateEventBody: boolean): boolean {

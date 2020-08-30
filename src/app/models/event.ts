@@ -10,6 +10,7 @@ export class Event {
   isOnlineMeeting: boolean;
   onlineMeetingProvider: string;
   location: Location;
+  categories: string;
 
   // Internal Boolean to toggle the checked view
   checked: boolean;
@@ -38,4 +39,10 @@ export class EmailAddress{
 
 export class Location{
   displayName: string;
+}
+
+export class OutlookCategory {
+  id: string;
+  displayName: string;
+  color: string;
 }
