@@ -10,7 +10,7 @@ export class Event {
   isOnlineMeeting: boolean;
   onlineMeetingProvider: string;
   location: Location;
-  categories: string;
+  categories: string[];
 
   // Internal Boolean to toggle the checked view
   checked: boolean;

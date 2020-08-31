@@ -34,11 +34,11 @@ export class EventService {
     return eventsWithEqualSubjectArray;
   }
 
-  public async getOutlookCategories(){
+  public async getOutlookCategories() {
     return await this.graphService.getOutlookCategories();
   }
 
-  public updateEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[], updateEventBody: boolean): boolean {
+  public updateEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[], updateEventBody: boolean, updateCategories: boolean): boolean {
     if (!eventsWithEqualSubjectArray) {
       return false;
     }
@@ -47,6 +47,9 @@ export class EventService {
       // Do not submit internal checked status
       event.checked = undefined;
       event.teamsChecked = undefined;
+      if (!updateCategories) {
+        event.categories = undefined;
+      }
       this.graphService.updateEvent(event);
     }
     this.alertsService.add(
@@ -98,27 +101,8 @@ export class EventService {
           teamsEvent.subject = '(TEAMS) ' + event.subject;
           teamsEvent.start = event.start;
           teamsEvent.end = event.end;
-
-          //>>> TEST
-          eventsWithEqualSubject.attendees.forEach(attendee => {
-            event.body.content += attendee.emailAddress.address + ';';
-          });
-          teamsEvent.body = event.body;
-          teamsEvent.isOnlineMeeting = true;
-          teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
-
-
-          let attendees: Attendee[] = [];
-          const emailAddress: EmailAddress = new EmailAddress();
-          emailAddress.address = 'julian.schmidtke@hsw-stud.de';
-          const attendee: Attendee = new Attendee();
-          attendee.emailAddress = emailAddress;
-          attendees = attendees.concat(attendee);
-
-          teamsEvent.attendees = attendees;
-          //<<< TEST
-
-          // teamsEvent.attendees = eventsWithEqualSubject.attendees;
+          teamsEvent.categories = eventsWithEqualSubject.categories;
+          teamsEvent.attendees = eventsWithEqualSubject.attendees;
 
           this.graphService.createEvent(teamsEvent);
         }
@@ -217,6 +201,7 @@ export class EventService {
         // The event will be added as a new Array
         const eventsWithEqualSubject: EventsWithEqualSubject = new EventsWithEqualSubject();
         eventsWithEqualSubject.events = [event];
+        eventsWithEqualSubject.categories = Array.from(event.categories);
         tmpEventsWithEqualSubjectArray.push(eventsWithEqualSubject);
       }
     }
@@ -243,6 +228,8 @@ export class EventService {
         let actCount = 0;
         for (let i = 0; i < eventsWithEqualSubject.events.length; i++) {
           const currentEvent = eventsWithEqualSubject.events[i];
+
+          currentEvent.categories = eventsWithEqualSubject.categories;
 
           if (currentEvent.checked) {
             actCount += 1;

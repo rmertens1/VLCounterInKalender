@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { CsvService } from '../services/csv.service';
-import { OutlookCategory } from '../models/event';
+import { OutlookCategory, Event } from '../models/event';
 
 interface Mode {
   value: string;
@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit {
   private allChecked: boolean;
   private allTeamsChecked: boolean;
   private updateBody: boolean;
+  public updateCategories: boolean;
 
   selectedMode: string = 'count';
   modes: Mode[] = [
@@ -44,6 +45,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.updateBody = true;
+    this.updateCategories = true;
     this.alertsService.removeAll();
     this.loading = false;
     this.setFormControls();
@@ -82,7 +85,7 @@ export class HomeComponent implements OnInit {
       this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
     }
     if (this.isModeCountMeetings()) {
-      this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody);
+      this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody, this.updateCategories);
     }
     this.reset();
   }
@@ -130,6 +133,16 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  switchCategory(eventsWithEqualSubject: EventsWithEqualSubject, displayName: string) {
+      const index = eventsWithEqualSubject.categories.indexOf(displayName, 0);
+      if (index > -1) {
+        // Contains the element => remove
+        eventsWithEqualSubject.categories.splice(index, 1);
+      } else {
+        // Does not contain the element => add
+        eventsWithEqualSubject.categories.push(displayName);
+      }
+  }
 
   reset() {
     this.eventsWithEqualSubjectArray = undefined;

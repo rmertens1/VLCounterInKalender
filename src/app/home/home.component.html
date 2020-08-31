@@ -102,7 +102,9 @@
                     Kategorien
                   </mat-expansion-panel-header>
                   <div *ngFor="let category of outlookCategories">
-                    <mat-checkbox>{{category.displayName}}</mat-checkbox>
+                    <mat-checkbox [checked]="eventsWithEqualSubject.categories.includes(category.displayName)"
+                      (change)="switchCategory(eventsWithEqualSubject, category.displayName)">
+                      {{category.displayName}}</mat-checkbox>
                   </div>
                 </mat-expansion-panel>
               </mat-accordion>
@@ -151,7 +153,7 @@
         </div>
       </div>
       <br />
-      Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!<br />
+      Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!<br /><br><br>
       <div *ngIf="isModeTeams()">
         <div *ngIf="$eventService.getAllEventsTeamsCheckedCount($eventsWithEqualSubjectArray) > 0">
           <h4>Teilnehmerlisten:</h4>
@@ -173,6 +175,11 @@
           </div>
         </div>
       </div>
+
+      <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
+        Kategorien der Termine mit aktualisieren
+      </mat-checkbox>
+      <br>
       <!-- Submit -->
       <button *ngIf="isModeCountMeetings()" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
         Termine aktualisieren

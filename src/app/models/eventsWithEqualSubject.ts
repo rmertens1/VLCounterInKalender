@@ -5,4 +5,5 @@ export class EventsWithEqualSubject {
   checked = false;
   teamsChecked = false;
   attendees: Attendee[];
+  categories: string[];
 }
