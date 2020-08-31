@@ -19,7 +19,7 @@
     <!-- Date picker -->
     <mat-form-field>
       <mat-label>Startdatum</mat-label>
-      <input matInput [matDatepicker]="picker1" [formControl]="$startDateFormControl" readonly />
+      <input matInput [matDatepicker]="picker1" [formControl]="startDateFormControl" readonly />
       <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
       <mat-datepicker #picker1></mat-datepicker>
     </mat-form-field>
@@ -27,7 +27,7 @@
     <!-- Date picker -->
     <mat-form-field>
       <mat-label>Enddatum</mat-label>
-      <input matInput [matDatepicker]="picker2" [formControl]="$endDateFormControl" readonly />
+      <input matInput [matDatepicker]="picker2" [formControl]="endDateFormControl" readonly />
       <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
       <mat-datepicker #picker2></mat-datepicker>
     </mat-form-field>
@@ -43,22 +43,22 @@
     </mat-form-field>
 
     <!-- Fetch events -->
-    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="$loading">
+    <button mat-flat-button color="primary" (click)="getEventsBtn_onClicked()" [disabled]="loading">
       Hole Termine
     </button>
   </div>
   <br />
 
-  <div *ngIf="$loading" class="m-5">
+  <div *ngIf="loading" class="m-5">
     <mat-spinner></mat-spinner>
   </div>
 
-  <div *ngIf="$eventsWithEqualSubjectArray">
-    <div *ngIf="$eventsWithEqualSubjectArray.length > 0">
+  <div *ngIf="eventsWithEqualSubjectArray">
+    <div *ngIf="eventsWithEqualSubjectArray.length > 0">
       <div *ngIf="isModeCountMeetings()">
-        Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der
-        Termine in Ihrem Kalender hinzufügen?<br />
-        <mat-checkbox [checked]="$updateBody" (change)="$updateBody = !$updateBody">Ja!</mat-checkbox>
+        <mat-checkbox [checked]="updateBody" (change)="updateBody = !updateBody">
+          Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen
+        </mat-checkbox>
         <br /><br>
       </div>
       <div *ngIf="!isModeCountMeetings()"><br><br><br></div>
@@ -66,11 +66,11 @@
       <div class="row">
         <div class="col-1" *ngIf="isModeCountMeetings()">
           <b>Zählen</b><br />
-          <mat-checkbox #all [checked]="$allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
+          <mat-checkbox #all [checked]="allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
         </div>
         <div class="col-1" *ngIf="isModeTeams()">
           <b>Teams</b><br />
-          <mat-checkbox #allTeams [checked]="$allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)">
+          <mat-checkbox #allTeams [checked]="allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)">
           </mat-checkbox>
         </div>
         <div class="col-7 ml-3"><b>Titel</b></div>
@@ -78,7 +78,7 @@
         <div class="col-1" *ngIf="isModeTeams()"><b>Anzahl Teams</b></div>
       </div>
 
-      <div class="row" *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
+      <div class="row" *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
         <div *ngIf="isModeCountMeetings()" class="col-1">
           <mat-checkbox [checked]="eventsWithEqualSubject.checked" (change)="
               eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked;
@@ -153,11 +153,11 @@
         </div>
       </div>
       <br />
-      Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!<br /><br><br>
+      Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!<br>
       <div *ngIf="isModeTeams()">
-        <div *ngIf="$eventService.getAllEventsTeamsCheckedCount($eventsWithEqualSubjectArray) > 0">
+        <div *ngIf="$eventService.getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray) > 0">
           <h4>Teilnehmerlisten:</h4>
-          <div *ngFor="let eventsWithEqualSubject of $eventsWithEqualSubjectArray">
+          <div *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
             <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0">
               <div class="col-7">
                 {{eventsWithEqualSubject.events[0].subject}}
@@ -175,7 +175,7 @@
           </div>
         </div>
       </div>
-
+      <br><br>
       <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
         Kategorien der Termine mit aktualisieren
       </mat-checkbox>
@@ -191,8 +191,8 @@
     </div>
   </div>
 </div>
-<div *ngIf="$eventsWithEqualSubjectArray">
-  <div *ngIf="$eventsWithEqualSubjectArray.length === 0">
+<div *ngIf="eventsWithEqualSubjectArray">
+  <div *ngIf="eventsWithEqualSubjectArray.length === 0">
     Es wurden keine Termine in Ihrem Kalender gefunden. Haben Sie den korrekten
     Zeitraum eingestellt?<br />
   </div>

@@ -19,13 +19,13 @@ interface Mode {
 })
 
 export class HomeComponent implements OnInit {
-  private eventsWithEqualSubjectArray: EventsWithEqualSubject[];
-  private startDateFormControl: FormControl;
-  private endDateFormControl: FormControl;
-  private loading: boolean;
-  private allChecked: boolean;
-  private allTeamsChecked: boolean;
-  private updateBody: boolean;
+  public eventsWithEqualSubjectArray: EventsWithEqualSubject[];
+  public startDateFormControl: FormControl;
+  public endDateFormControl: FormControl;
+  public loading: boolean;
+  public allChecked: boolean;
+  public allTeamsChecked: boolean;
+  public updateBody: boolean;
   public updateCategories: boolean;
 
   selectedMode: string = 'count';
@@ -45,8 +45,8 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.updateBody = true;
     this.updateCategories = true;
+    this.updateBody = true;
     this.alertsService.removeAll();
     this.loading = false;
     this.setFormControls();
@@ -148,36 +148,11 @@ export class HomeComponent implements OnInit {
     this.eventsWithEqualSubjectArray = undefined;
     this.allChecked = false;
     this.allTeamsChecked = false;
-    this.updateBody = false;
   }
 
   async signIn(): Promise<void> {
     this.alertsService.removeAll();
     this.authService.signIn();
-  }
-
-  public get $startDateFormControl() {
-    return this.startDateFormControl;
-  }
-
-  public set $startDateFormControl(startDateFormControl: FormControl) {
-    this.startDateFormControl = startDateFormControl;
-  }
-
-  public get $endDateFormControl() {
-    return this.endDateFormControl;
-  }
-
-  public set $endDateFormControl(endDateFormControl: FormControl) {
-    this.endDateFormControl = endDateFormControl;
-  }
-
-  public get $eventsWithEqualSubjectArray() {
-    return this.eventsWithEqualSubjectArray;
-  }
-
-  public set $eventsWithEqualSubjectArray(eventsWithEqualSubjectArray: EventsWithEqualSubject[]) {
-    this.eventsWithEqualSubjectArray = eventsWithEqualSubjectArray;
   }
 
   public get $authService() {
@@ -194,38 +169,5 @@ export class HomeComponent implements OnInit {
 
   public set $eventService(eventService: EventService) {
     this.eventService = eventService;
-  }
-
-
-  public get $allChecked() {
-    return this.allChecked;
-  }
-
-  public set $allChecked(allChecked: boolean) {
-    this.allChecked = allChecked;
-  }
-
-  public get $updateBody() {
-    return this.updateBody;
-  }
-
-  public set $updateBody(updateBody: boolean) {
-    this.updateBody = updateBody;
-  }
-
-  public get $loading() {
-    return this.loading;
-  }
-
-  public set $loading(loading: boolean) {
-    this.loading = loading;
-  }
-
-  public get $allTeamsChecked() {
-    return this.allTeamsChecked;
-  }
-
-  public set $allTeamsChecked(allTeamsChecked: boolean) {
-    this.allTeamsChecked = allTeamsChecked;
   }
 }
