@@ -147,7 +147,6 @@
         </div>
       </div>
       <br />
-      Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!<br>
       <div *ngIf="isModeTeams()">
         <div *ngIf="$eventService.getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray) > 0">
           <h4>Teilnehmerlisten:</h4>
@@ -169,13 +168,12 @@
           </div>
         </div>
       </div>
-      <br><br>
+      <br>
       <div *ngIf="isModeCountMeetings()">
         <mat-checkbox [checked]="updateBody" (change)="updateBody = !updateBody">
           Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen
         </mat-checkbox>
       </div>
-      <br>
       <div>
         <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
           Kategorien der Termine mit aktualisieren
@@ -190,6 +188,8 @@
         [disabled]="!allImported()">
         Termine aktualisieren
       </button>
+      <br><br>
+      Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!
     </div>
   </div>
 </div>
