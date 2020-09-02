@@ -55,12 +55,6 @@
 
   <div *ngIf="eventsWithEqualSubjectArray">
     <div *ngIf="eventsWithEqualSubjectArray.length > 0">
-      <div *ngIf="isModeCountMeetings()">
-        <mat-checkbox [checked]="updateBody" (change)="updateBody = !updateBody">
-          Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen
-        </mat-checkbox>
-        <br /><br>
-      </div>
       <div *ngIf="!isModeCountMeetings()"><br><br><br></div>
       <h1>Ihr Kalender</h1>
       <div class="row">
@@ -176,9 +170,17 @@
         </div>
       </div>
       <br><br>
-      <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
-        Kategorien der Termine mit aktualisieren
-      </mat-checkbox>
+      <div *ngIf="isModeCountMeetings()">
+        <mat-checkbox [checked]="updateBody" (change)="updateBody = !updateBody">
+          Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen
+        </mat-checkbox>
+      </div>
+      <br>
+      <div>
+        <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
+          Kategorien der Termine mit aktualisieren
+        </mat-checkbox>
+      </div>
       <br>
       <!-- Submit -->
       <button *ngIf="isModeCountMeetings()" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
