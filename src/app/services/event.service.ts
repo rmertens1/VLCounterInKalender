@@ -101,6 +101,8 @@ export class EventService {
           teamsEvent.subject = '(TEAMS) ' + event.subject;
           teamsEvent.start = event.start;
           teamsEvent.end = event.end;
+          teamsEvent.isOnlineMeeting = true;
+          teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
           teamsEvent.categories = eventsWithEqualSubject.categories;
           teamsEvent.attendees = eventsWithEqualSubject.attendees;
 
