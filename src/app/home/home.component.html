@@ -55,139 +55,204 @@
 
   <div *ngIf="eventsWithEqualSubjectArray">
     <div *ngIf="eventsWithEqualSubjectArray.length > 0">
-      <div *ngIf="!isModeCountMeetings()"><br><br><br></div>
-      <h1>Ihr Kalender</h1>
-      <div class="row">
-        <div class="col-1" *ngIf="isModeCountMeetings()">
-          <b>Zählen</b><br />
-          <mat-checkbox #all [checked]="allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
+      <div *ngIf="isModeCountMeetings()">
+        <h1>Ihr Kalender</h1>
+        <div class="row">
+          <div class="col-1">
+            <b>Zählen</b><br />
+            <mat-checkbox #all [checked]="allChecked" (change)="checkAll(all.checked)"></mat-checkbox>
+          </div>
+          <div class="col-7 ml-3"><b>Titel</b></div>
+          <div class="col-1"><b>Anzahl Zählen</b></div>
         </div>
-        <div class="col-1" *ngIf="isModeTeams()">
-          <b>Teams</b><br />
-          <mat-checkbox #allTeams [checked]="allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)">
-          </mat-checkbox>
-        </div>
-        <div class="col-7 ml-3"><b>Titel</b></div>
-        <div class="col-1" *ngIf="isModeCountMeetings()"><b>Anzahl Zählen</b></div>
-        <div class="col-1" *ngIf="isModeTeams()"><b>Anzahl Teams</b></div>
-      </div>
 
-      <div class="row" *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
-        <div *ngIf="isModeCountMeetings()" class="col-1">
-          <mat-checkbox [checked]="eventsWithEqualSubject.checked" (change)="
+        <div class="row" *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
+          <div class="col-1">
+            <mat-checkbox [checked]="eventsWithEqualSubject.checked" (change)="
               eventsWithEqualSubject.checked = !eventsWithEqualSubject.checked;
               checkAllSubEvents(eventsWithEqualSubject)
             ">
+            </mat-checkbox>
+          </div>
+          <div class="col-7">
+            <mat-accordion>
+              <mat-expansion-panel class="mat-elevation-z0">
+                <mat-accordion>
+                  <mat-expansion-panel class="mat-elevation">
+                    <mat-expansion-panel-header>
+                      Kategorien
+                    </mat-expansion-panel-header>
+                    <div *ngFor="let category of outlookCategories">
+                      <mat-checkbox [checked]="eventsWithEqualSubject.categories.includes(category.displayName)"
+                        (change)="switchCategory(eventsWithEqualSubject, category.displayName)">
+                        {{category.displayName}}</mat-checkbox>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
+
+                <!-- Subject of the first event, since they all are the same -->
+                <mat-expansion-panel-header>
+                  {{ eventsWithEqualSubject.events[0].subject }}
+                </mat-expansion-panel-header>
+                <table class="table table-responsive table-borderless">
+                  <thead>
+                    <th scope="col">Zählen</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">Ende</th>
+                    <th scope="col">Ort</th>
+                  </thead>
+                  <tbody>
+                    <!-- Each row represents a single event -->
+                    <tr *ngFor="let event of eventsWithEqualSubject.events">
+                      <td>
+                        <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked">
+                        </mat-checkbox>
+                      </td>
+                      <td>
+                        {{ $eventService.formatDateTimeTimeZone(event.start) }}
+                      </td>
+                      <td>
+                        {{ $eventService.formatDateTimeTimeZone(event.end) }}
+                      </td>
+                      <td>{{ event.location.displayName }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+          <!-- Number of checked Events with this subject -->
+          <div class="col-1">
+            {{ $eventService.getCheckedSubEventCount(eventsWithEqualSubject) }}
+          </div>
+        </div>
+        <br />
+        <br>
+        <div>
+          <mat-checkbox [checked]="updateBody" (change)="updateBody = !updateBody">
+            Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender
+            hinzufügen
           </mat-checkbox>
         </div>
-        <div class="col-1" *ngIf="isModeTeams()">
-          <mat-checkbox [checked]="eventsWithEqualSubject.teamsChecked" (change)="
+        <div>
+          <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
+            Kategorien der Termine mit aktualisieren
+          </mat-checkbox>
+        </div>
+        <br>
+        <!-- Submit -->
+        <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
+          Termine aktualisieren
+        </button>
+      </div>
+      <div *ngIf="isModeTeams()">
+        <h1>Ihr Kalender</h1>
+        <div class="row">
+          <div class="col-1">
+            <b>Teams</b><br />
+            <mat-checkbox #allTeams [checked]="allTeamsChecked" (change)="teamsCheckAll(allTeams.checked)">
+            </mat-checkbox>
+          </div>
+          <div class="col-7 ml-3"><b>Titel</b></div>
+          <div class="col-1"><b>Anzahl Teams</b></div>
+        </div>
+
+        <div class="row" *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
+          <div class="col-1">
+            <mat-checkbox [checked]="eventsWithEqualSubject.teamsChecked" (change)="
               eventsWithEqualSubject.teamsChecked = !eventsWithEqualSubject.teamsChecked;
               teamsCheckAllSubEvents(eventsWithEqualSubject)
             ">
-          </mat-checkbox>
-        </div>
-        <div class="col-7">
-          <mat-accordion>
-            <mat-expansion-panel class="mat-elevation-z0">
-              <mat-accordion>
-                <mat-expansion-panel class="mat-elevation">
-                  <mat-expansion-panel-header>
-                    Kategorien
-                  </mat-expansion-panel-header>
-                  <div *ngFor="let category of outlookCategories">
-                    <mat-checkbox [checked]="eventsWithEqualSubject.categories.includes(category.displayName)"
-                      (change)="switchCategory(eventsWithEqualSubject, category.displayName)">
-                      {{category.displayName}}</mat-checkbox>
-                  </div>
-                </mat-expansion-panel>
-              </mat-accordion>
+            </mat-checkbox>
+          </div>
+          <div class="col-7">
+            <mat-accordion>
+              <mat-expansion-panel class="mat-elevation-z0">
+                <mat-accordion>
+                  <mat-expansion-panel class="mat-elevation">
+                    <mat-expansion-panel-header>
+                      Kategorien
+                    </mat-expansion-panel-header>
+                    <div *ngFor="let category of outlookCategories">
+                      <mat-checkbox [checked]="eventsWithEqualSubject.categories.includes(category.displayName)"
+                        (change)="switchCategory(eventsWithEqualSubject, category.displayName)">
+                        {{category.displayName}}</mat-checkbox>
+                    </div>
+                  </mat-expansion-panel>
+                </mat-accordion>
 
-              <!-- Subject of the first event, since they all are the same -->
-              <mat-expansion-panel-header>
-                {{ eventsWithEqualSubject.events[0].subject }}
-              </mat-expansion-panel-header>
-              <table class="table table-responsive table-borderless">
-                <thead>
-                  <th scope="col" *ngIf="isModeCountMeetings()">Zählen</th>
-                  <th scope="col" *ngIf="isModeTeams()">Teams</th>
-                  <th scope="col">Start</th>
-                  <th scope="col">Ende</th>
-                  <th scope="col">Ort</th>
-                </thead>
-                <tbody>
-                  <!-- Each row represents a single event -->
-                  <tr *ngFor="let event of eventsWithEqualSubject.events">
-                    <td *ngIf="isModeCountMeetings()">
-                      <mat-checkbox [checked]="event.checked" (change)="event.checked = !event.checked"></mat-checkbox>
-                    </td>
-                    <td *ngIf="isModeTeams()">
-                      <mat-checkbox [checked]="event.teamsChecked" (change)="event.teamsChecked = !event.teamsChecked">
-                      </mat-checkbox>
-                    </td>
-                    <td>
-                      {{ $eventService.formatDateTimeTimeZone(event.start) }}
-                    </td>
-                    <td>
-                      {{ $eventService.formatDateTimeTimeZone(event.end) }}
-                    </td>
-                    <td>{{ event.location.displayName }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </mat-expansion-panel>
-          </mat-accordion>
+                <!-- Subject of the first event, since they all are the same -->
+                <mat-expansion-panel-header>
+                  {{ eventsWithEqualSubject.events[0].subject }}
+                </mat-expansion-panel-header>
+                <table class="table table-responsive table-borderless">
+                  <thead>
+                    <th scope="col">Teams</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">Ende</th>
+                    <th scope="col">Ort</th>
+                  </thead>
+                  <tbody>
+                    <!-- Each row represents a single event -->
+                    <tr *ngFor="let event of eventsWithEqualSubject.events">
+                      <td>
+                        <mat-checkbox [checked]="event.teamsChecked"
+                          (change)="event.teamsChecked = !event.teamsChecked">
+                        </mat-checkbox>
+                      </td>
+                      <td>
+                        {{ $eventService.formatDateTimeTimeZone(event.start) }}
+                      </td>
+                      <td>
+                        {{ $eventService.formatDateTimeTimeZone(event.end) }}
+                      </td>
+                      <td>{{ event.location.displayName }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+          <!-- Number of checked Events with this subject -->
+          <div class="col-1">
+            {{ $eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) }}
+          </div>
         </div>
-        <!-- Number of checked Events with this subject -->
-        <div class="col-1" *ngIf="isModeCountMeetings()">
-          {{ $eventService.getCheckedSubEventCount(eventsWithEqualSubject) }}
-        </div>
-        <div class="col-1" *ngIf="isModeTeams()">
-          {{ $eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) }}
-        </div>
-      </div>
-      <br />
-      <div *ngIf="isModeTeams()">
-        <div *ngIf="$eventService.getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray) > 0">
-          <h4>Teilnehmerlisten:</h4>
-          <div *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
-            <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0">
-              <div class="col-7">
-                {{eventsWithEqualSubject.events[0].subject}}
-              </div>
-              <div class="col-1">
-                <div *ngIf="eventsWithEqualSubject.attendees">
-                  {{eventsWithEqualSubject.attendees.length}}
+        <br />
+        <div>
+          <div *ngIf="$eventService.getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray) > 0">
+            <h4>Teilnehmerlisten:</h4>
+            <div *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
+              <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0">
+                <div class="col-7">
+                  {{eventsWithEqualSubject.events[0].subject}}
                 </div>
+                <div class="col-1">
+                  <div *ngIf="eventsWithEqualSubject.attendees">
+                    {{eventsWithEqualSubject.attendees.length}}
+                  </div>
+                </div>
+                <div class="col-4 form-group">
+                  <input type="file" id="file" (change)="handleFileInput(eventsWithEqualSubject, $event)">
+                </div>
+                <hr>
               </div>
-              <div class="col-4 form-group">
-                <input type="file" id="file" (change)="handleFileInput(eventsWithEqualSubject, $event)">
-              </div>
-              <hr>
             </div>
           </div>
         </div>
+        <br>
+        <div>
+          <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
+            Kategorien der Termine mit aktualisieren
+          </mat-checkbox>
+        </div>
+        <br>
+        <!-- Submit -->
+        <button mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()"
+          [disabled]="!allImported()">
+          Termine aktualisieren
+        </button>
       </div>
-      <br>
-      <div *ngIf="isModeCountMeetings()">
-        <mat-checkbox [checked]="updateBody" (change)="updateBody = !updateBody">
-          Daten der vorherigen und nächsten Veranstaltung zu den Beschreibungen der Termine in Ihrem Kalender hinzufügen
-        </mat-checkbox>
-      </div>
-      <div>
-        <mat-checkbox [checked]="updateCategories" (change)="updateCategories = !updateCategories">
-          Kategorien der Termine mit aktualisieren
-        </mat-checkbox>
-      </div>
-      <br>
-      <!-- Submit -->
-      <button *ngIf="isModeCountMeetings()" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()">
-        Termine aktualisieren
-      </button>
-      <button *ngIf="isModeTeams()" mat-flat-button color="primary" (click)="updateEventsBtn_onClicked()"
-        [disabled]="!allImported()">
-        Termine aktualisieren
-      </button>
       <br><br>
       Es hat etwas nicht funktioniert wie erwartet? Schauen Sie in die <a routerLink="/help">Hilfe</a>!
     </div>
