@@ -19,6 +19,7 @@ export class EventService {
   private regexHSWEventSubjectFirstSemester: RegExp = /.*\d{2}\/\d{2}.*/;
   private regexHSWEventSubjectDualRegex: RegExp = /.*\d{2}\/\d{2} - \d{1}.*/gi;
   private regexHSWEventSubjectMBARegex: RegExp = /.*\d{2}\/\d{2} MBA\d{2}.*/gi;
+  private regexTeams: RegExp = /.*TEAMS.*/gi;
 
   public async getEvents(startDate: Date, endDate: Date, removeSingleEvents = true): Promise<EventsWithEqualSubject[]> {
     const eventsWithEqualSubjectArray = await this.graphService.getEvents(startDate, endDate)
@@ -171,6 +172,9 @@ export class EventService {
   private removeOtherEvents(events: Event[]): Event[] {
     const newEvents: Event[] = [];
     for (const event of events) {
+      if(event.subject.match(this.regexTeams)){
+        continue;
+      }
       // Comparison to check if the subject of an event matches the pattern the HSW uses
       if ((event.subject.match(this.regexHSWEventSubjectDualRegex)) ||
         (event.subject.match(this.regexHSWEventSubjectMBARegex)) ||
