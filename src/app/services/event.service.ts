@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { GraphService } from './graph.service';
-import { Event, DateTimeTimeZone, Attendee, EmailAddress, OutlookCategory } from '../models/event';
+import * as moment from 'moment-timezone';
+import { AlertType } from '../models/alertType.enum';
+import { CombinableEvents } from '../models/combinableEvents';
+import { DateTimeTimeZone, Event } from '../models/event';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { AlertsService } from './alerts.service';
-import { AlertType } from '../models/alertType.enum';
-import * as moment from 'moment-timezone';
+import { GraphService } from './graph.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class EventService {
   private regexHSWEventSubjectDualRegex: RegExp = /.*\d{2}\/\d{2} - \d{1}.*/gi;
   private regexHSWEventSubjectMBARegex: RegExp = /.*\d{2}\/\d{2} MBA\d{2}.*/gi;
   private regexTeams: RegExp = /.*TEAMS.*/gi;
+  public nameRegex: RegExp = /(.*)\d{2}\/\d{2}/gi;
 
   public async getEvents(startDate: Date, endDate: Date, removeSingleEvents = true): Promise<EventsWithEqualSubject[]> {
     const eventsWithEqualSubjectArray = await this.graphService.getEvents(startDate, endDate)
@@ -172,7 +174,7 @@ export class EventService {
   private removeOtherEvents(events: Event[]): Event[] {
     const newEvents: Event[] = [];
     for (const event of events) {
-      if(event.subject.match(this.regexTeams)){
+      if (event.subject.match(this.regexTeams)) {
         continue;
       }
       // Comparison to check if the subject of an event matches the pattern the HSW uses
@@ -267,5 +269,33 @@ export class EventService {
       }
     }
     return renamedEvents;
+  }
+
+  findCombinableEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): CombinableEvents[] {
+    const combinableEvents: CombinableEvents[] = [];
+    for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
+      let found = false;
+      for (const comb of combinableEvents) {
+        if (eventsWithEqualSubject.events[0].subject.indexOf(comb.eventsWithEqualSubjectArray[0].events[0].subject.match(this.nameRegex)[0]) > -1) {
+          comb.eventsWithEqualSubjectArray.push(eventsWithEqualSubject);
+          found = true;
+        }
+      }
+
+      if (!found){
+        const comb = new CombinableEvents();
+        comb.shortSubject = eventsWithEqualSubject.events[0].subject.match(this.nameRegex)[0];
+        comb.eventsWithEqualSubjectArray.push(eventsWithEqualSubject);
+        combinableEvents.push(comb);
+      }
+    }
+
+    const rCombinableEvents: CombinableEvents[] = [];
+    for (const comb of combinableEvents) {
+      if (comb.eventsWithEqualSubjectArray.length > 1)
+        rCombinableEvents.push(comb);
+    };
+
+    return rCombinableEvents;
   }
 }

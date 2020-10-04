@@ -6,6 +6,7 @@ import { EventService } from '../services/event.service';
 import { EventsWithEqualSubject } from '../models/eventsWithEqualSubject';
 import { CsvService } from '../services/csv.service';
 import { OutlookCategory, Event } from '../models/event';
+import { CombinableEvents } from '../models/combinableEvents';
 
 interface Mode {
   value: string;
@@ -20,6 +21,7 @@ interface Mode {
 
 export class HomeComponent implements OnInit {
   public eventsWithEqualSubjectArray: EventsWithEqualSubject[];
+  public combinableEvents: CombinableEvents[];
   public startDateFormControl: FormControl;
   public endDateFormControl: FormControl;
   public loading: boolean;
@@ -31,6 +33,7 @@ export class HomeComponent implements OnInit {
   selectedMode: string = 'count';
   modes: Mode[] = [
     { value: 'count', viewValue: 'Veranstaltungen zählen' },
+    { value: 'combine', viewValue: 'Veranstaltungen kombinieren' },
     { value: 'teams', viewValue: 'Teams Termine anlegen' }
   ]
 
@@ -56,6 +59,10 @@ export class HomeComponent implements OnInit {
     return this.selectedMode == 'count';
   }
 
+  public isModeCombine(): boolean {
+    return this.selectedMode == 'combine';
+  }
+
   public isModeTeams(): boolean {
     return this.selectedMode == 'teams';
   }
@@ -73,6 +80,7 @@ export class HomeComponent implements OnInit {
     this.loading = true;
     this.outlookCategories = await this.eventService.getOutlookCategories();
     this.eventsWithEqualSubjectArray = await this.eventService.getEvents(this.startDateFormControl.value, this.endDateFormControl.value, this.isModeCountMeetings());
+    this.combinableEvents = this.eventService.findCombinableEvents(this.eventsWithEqualSubjectArray);
     this.loading = false;
   }
 
@@ -81,13 +89,29 @@ export class HomeComponent implements OnInit {
       return;
     }
 
-    if (this.isModeTeams()) {
-      this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
-    }
+
     if (this.isModeCountMeetings()) {
       this.eventService.updateEvents(this.eventsWithEqualSubjectArray, this.updateBody, this.updateCategories);
     }
     this.reset();
+  }
+
+  createTeamEventsBtn_onClicked() {
+    if (!this.eventsWithEqualSubjectArray) {
+      return;
+    }
+    if (this.isModeTeams()) {
+      this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
+    }
+  }
+
+  combineEventsBtn_onClicked() {
+    if (!this.eventsWithEqualSubjectArray) {
+      return;
+    }
+    if (this.isModeCombine()) {
+      // Todo
+    }
   }
 
   allImported(): boolean {
@@ -134,14 +158,14 @@ export class HomeComponent implements OnInit {
   }
 
   switchCategory(eventsWithEqualSubject: EventsWithEqualSubject, displayName: string) {
-      const index = eventsWithEqualSubject.categories.indexOf(displayName, 0);
-      if (index > -1) {
-        // Contains the element => remove
-        eventsWithEqualSubject.categories.splice(index, 1);
-      } else {
-        // Does not contain the element => add
-        eventsWithEqualSubject.categories.push(displayName);
-      }
+    const index = eventsWithEqualSubject.categories.indexOf(displayName, 0);
+    if (index > -1) {
+      // Contains the element => remove
+      eventsWithEqualSubject.categories.splice(index, 1);
+    } else {
+      // Does not contain the element => add
+      eventsWithEqualSubject.categories.push(displayName);
+    }
   }
 
   reset() {
