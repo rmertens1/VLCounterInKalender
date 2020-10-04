@@ -147,32 +147,38 @@
       </div>
 
       <div *ngIf="isModeCombine()">
-        <h1>Ihr Kalender</h1>
-        <div class ="row">
-          <div class="col-2"><b>Kombinieren</b></div>
-          <div class="col-10"></div>
-        </div>
-        <div *ngFor="let comb of combinableEvents">
+        <div *ngIf="combinableEvents.length > 0">
+          <h1>Ihr Kalender</h1>
           <div class="row">
-            <div class="col-2">
-              <mat-checkbox #all [checked]="comb.combine" (change)="comb.combine = !comb.combine"></mat-checkbox>
-            </div>
-            <div class="col-10">
-              <b>{{comb.shortSubject}}</b>
-            </div>
+            <div class="col-2"><b>Kombinieren</b></div>
+            <div class="col-10"><b>Titel</b></div>
           </div>
-          <div *ngFor="let eventsWithEqualSubject of comb.eventsWithEqualSubjectArray">
+          <div *ngFor="let comb of combinableEvents">
             <div class="row">
-              <div class="col-2"></div>
-              <div class="col-10">{{eventsWithEqualSubject.events[0].subject}}</div>
+              <div class="col-2">
+                <mat-checkbox #all [checked]="comb.combine" (change)="comb.combine = !comb.combine"></mat-checkbox>
+              </div>
+              <div class="col-10">
+                <b>{{comb.shortSubject}}</b>
+              </div>
+            </div>
+            <div *ngFor="let eventsWithEqualSubject of comb.eventsWithEqualSubjectArray">
+              <div class="row">
+                <div class="col-2"></div>
+                <div class="col-10">{{eventsWithEqualSubject.events[0].subject}}</div>
+              </div>
             </div>
           </div>
+          <br />
+          <!-- Submit -->
+          <button mat-flat-button color="primary" (click)="combineEventsBtn_onClicked()">
+            Veranstaltungen kombinieren
+          </button>
         </div>
-        <br />
-        <!-- Submit -->
-        <button mat-flat-button color="primary" (click)="combineEventsBtn_onClicked()">
-          Veranstaltungen kombinieren
-        </button>
+
+        <div *ngIf="combinableEvents.length === 0">
+         <b>Es wurden keine Veranstaltungen mit ähnlichen Titeln gefunden.</b>
+        </div>
       </div>
 
       <div *ngIf="isModeTeams()">
