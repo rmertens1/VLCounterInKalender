@@ -282,7 +282,7 @@ export class EventService {
         }
       }
 
-      if (!found){
+      if (!found) {
         const comb = new CombinableEvents();
         comb.shortSubject = eventsWithEqualSubject.events[0].subject.match(this.nameRegex)[0];
         comb.eventsWithEqualSubjectArray.push(eventsWithEqualSubject);
@@ -297,5 +297,23 @@ export class EventService {
     };
 
     return rCombinableEvents;
+  }
+
+  combineEvents(combinableEvents: CombinableEvents[]) {
+    for (const combinableEvent of combinableEvents) {
+      if (combinableEvent.combine) {
+        for (const eventsWithEqualSubject of combinableEvent.eventsWithEqualSubjectArray) {
+          for (const event of eventsWithEqualSubject.events) {
+            event.subject = combinableEvent.shortSubject;
+            this.graphService.updateEvent(event);
+          }
+        }
+      }
+      this.alertsService.add(
+        `Veranstaltung ${combinableEvent.shortSubject} erfolgreich zusammengefügt.`,
+        `${combinableEvent.eventsWithEqualSubjectArray.length} Veranstaltungen wurden erfolgreich kombiniert und an Outlook übertragen. Sie können diese bald in Ihrem Kalender nachschlagen. Je nach Anzahl der Termine kann dies einige Minuten dauern.`,
+        AlertType.success
+      );
+    }
   }
 }

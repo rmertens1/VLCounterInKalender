@@ -2,7 +2,7 @@ import { Event, Attendee } from './event';
 import { EventsWithEqualSubject } from './eventsWithEqualSubject';
 
 export class CombinableEvents {
-  shortSubject: String;
+  shortSubject: string;
   eventsWithEqualSubjectArray: EventsWithEqualSubject[] = [];
   combine: boolean;
 }

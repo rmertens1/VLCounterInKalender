@@ -103,6 +103,7 @@ export class HomeComponent implements OnInit {
     if (this.isModeTeams()) {
       this.eventService.createTeamsEvents(this.eventsWithEqualSubjectArray);
     }
+    this.reset();
   }
 
   combineEventsBtn_onClicked() {
@@ -110,8 +111,9 @@ export class HomeComponent implements OnInit {
       return;
     }
     if (this.isModeCombine()) {
-      // Todo
+      this.eventService.combineEvents(this.combinableEvents);
     }
+    this.reset();
   }
 
   allImported(): boolean {

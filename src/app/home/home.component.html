@@ -35,7 +35,7 @@
     <!-- Choose current mode -->
     <mat-form-field appearance="fill">
       <mat-label>Modus</mat-label>
-      <mat-select [(ngModel)]="selectedMode" name="mode">
+      <mat-select [(ngModel)]="selectedMode" name="mode" (selectionChange)="reset()">
         <mat-option *ngFor="let mode of modes" [value]="mode.value">
           {{mode.viewValue}}
         </mat-option>
@@ -155,7 +155,7 @@
         <div *ngFor="let comb of combinableEvents">
           <div class="row">
             <div class="col-2">
-              <mat-checkbox #all [checked]="comb.merge" (change)="comb.merge = !comb.merge"></mat-checkbox>
+              <mat-checkbox #all [checked]="comb.combine" (change)="comb.combine = !comb.combine"></mat-checkbox>
             </div>
             <div class="col-10">
               <b>{{comb.shortSubject}}</b>
