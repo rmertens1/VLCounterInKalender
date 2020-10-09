@@ -301,19 +301,25 @@ export class EventService {
 
   combineEvents(combinableEvents: CombinableEvents[]) {
     for (const combinableEvent of combinableEvents) {
+      let count = 0;
       if (combinableEvent.combine) {
         for (const eventsWithEqualSubject of combinableEvent.eventsWithEqualSubjectArray) {
-          for (const event of eventsWithEqualSubject.events) {
-            event.subject = combinableEvent.shortSubject;
-            this.graphService.updateEvent(event);
+          if(eventsWithEqualSubject.combine){
+            count++;
+            for (const event of eventsWithEqualSubject.events) {
+              event.subject = combinableEvent.shortSubject;
+              this.graphService.updateEvent(event);
+            }
           }
         }
       }
-      this.alertsService.add(
-        `Veranstaltung ${combinableEvent.shortSubject} erfolgreich zusammengefügt.`,
-        `${combinableEvent.eventsWithEqualSubjectArray.length} Veranstaltungen wurden erfolgreich kombiniert und an Outlook übertragen. Sie können diese bald in Ihrem Kalender nachschlagen. Je nach Anzahl der Termine kann dies einige Minuten dauern.`,
-        AlertType.success
-      );
+      if(count > 0){
+        this.alertsService.add(
+          `Veranstaltung ${combinableEvent.shortSubject} erfolgreich zusammengefügt.`,
+          `${count} Veranstaltungen wurden erfolgreich kombiniert und an Outlook übertragen. Sie können diese bald in Ihrem Kalender nachschlagen. Je nach Anzahl der Termine kann dies einige Minuten dauern.`,
+          AlertType.success
+        );
+      }
     }
   }
 }
