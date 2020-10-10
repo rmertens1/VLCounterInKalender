@@ -5,4 +5,5 @@ export class CombinableEvents {
   shortSubject: string;
   eventsWithEqualSubjectArray: EventsWithEqualSubject[] = [];
   combine: boolean;
+  customName: boolean;
 }

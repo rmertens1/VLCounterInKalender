@@ -158,7 +158,7 @@
               <div class="col-2">
                 <mat-checkbox #all [checked]="comb.combine" (change)="comb.combine = !comb.combine"></mat-checkbox>
               </div>
-                <div class="col-10" *ngIf="comb.combine"><mat-form-field class="full-width"><input matInput [value]="comb.shortSubject" (input)="comb.shortSubject = $event.target.value"/></mat-form-field></div>
+                <div class="col-10" *ngIf="comb.combine"><mat-form-field class="full-width"><input matInput [value]="comb.shortSubject" (input)="comb.shortSubject = $event.target.value; comb.customName = true"/></mat-form-field></div>
                 <div class="col-10" *ngIf="!comb.combine"><b>{{comb.shortSubject}}</b></div>
             </div>
             <div *ngFor="let eventsWithEqualSubject of comb.eventsWithEqualSubjectArray">

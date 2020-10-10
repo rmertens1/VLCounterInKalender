@@ -306,6 +306,12 @@ export class EventService {
         for (const eventsWithEqualSubject of combinableEvent.eventsWithEqualSubjectArray) {
           if(eventsWithEqualSubject.combine){
             count++;
+
+            if (!combinableEvent.customName){
+              combinableEvent.shortSubject = eventsWithEqualSubject.events[0].subject;
+              combinableEvent.customName = true;
+            }
+
             for (const event of eventsWithEqualSubject.events) {
               event.subject = combinableEvent.shortSubject;
               this.graphService.updateEvent(event);
