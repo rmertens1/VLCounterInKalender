@@ -108,17 +108,17 @@ export class EventService {
           teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
           teamsEvent.categories = eventsWithEqualSubject.categories;
           teamsEvent.attendees = eventsWithEqualSubject.attendees;
+          if(!teamsEvent.body || !teamsEvent.body.content){
+            teamsEvent.body = new ItemBody();
+            teamsEvent.body.contentType = 'html';
+            teamsEvent.body.content = '';
+          }
           if(eventsWithEqualSubject.customUrl){
-            if(!teamsEvent.body || !teamsEvent.body.content){
-              teamsEvent.body = new ItemBody();
-              teamsEvent.body.contentType = 'html';
-              teamsEvent.body.content = '';
-            }
             let url: URL;
             try {
               url = new URL(eventsWithEqualSubject.customUrl);
             } catch (error) {
-              this.alertsService.add('Bitte fügen Sie nur valide URLs ein',`${eventsWithEqualSubject.customUrl} ist keine valide URL.`,AlertType.danger);
+              this.alertsService.add('Bitte fügen Sie nur valide URLs inkl. https:// ein',`${eventsWithEqualSubject.customUrl} ist keine valide URL.`,AlertType.danger);
               throw new Error("");
             }
             teamsEvent.body.content += `Der Dozent hat eine URL für diese Veranstaltung hinzugefügt: <br> <a href="${url.href}">${url.hostname}</a>`;
