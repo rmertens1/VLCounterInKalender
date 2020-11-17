@@ -6,6 +6,7 @@ export class EventsWithEqualSubject {
   teamsChecked = false;
   attendees: Attendee[];
   categories: string[];
+  customUrl: string;
 
   combine: boolean;
 }

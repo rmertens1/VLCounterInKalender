@@ -158,13 +158,20 @@
               <div class="col-2">
                 <mat-checkbox #all [checked]="comb.combine" (change)="comb.combine = !comb.combine"></mat-checkbox>
               </div>
-                <div class="col-10" *ngIf="comb.combine"><mat-form-field class="full-width"><input matInput [value]="comb.shortSubject" (input)="comb.shortSubject = $event.target.value; comb.customName = true"/></mat-form-field></div>
-                <div class="col-10" *ngIf="!comb.combine"><b>{{comb.shortSubject}}</b></div>
+              <div class="col-10" *ngIf="comb.combine">
+                <mat-form-field class="full-width"><input matInput [value]="comb.shortSubject"
+                    (input)="comb.shortSubject = $event.target.value; comb.customName = true" /></mat-form-field>
+              </div>
+              <div class="col-10" *ngIf="!comb.combine"><b>{{comb.shortSubject}}</b></div>
             </div>
             <div *ngFor="let eventsWithEqualSubject of comb.eventsWithEqualSubjectArray">
               <div class="row">
                 <div class="col-2"></div>
-                <div class="col-10" *ngIf="comb.combine"><mat-checkbox [checked]="eventsWithEqualSubject.combine" (change)="eventsWithEqualSubject.combine = !eventsWithEqualSubject.combine">{{eventsWithEqualSubject.events[0].subject}}</mat-checkbox></div>
+                <div class="col-10" *ngIf="comb.combine">
+                  <mat-checkbox [checked]="eventsWithEqualSubject.combine"
+                    (change)="eventsWithEqualSubject.combine = !eventsWithEqualSubject.combine">
+                    {{eventsWithEqualSubject.events[0].subject}}</mat-checkbox>
+                </div>
                 <div class="col-10" *ngIf="!comb.combine">{{eventsWithEqualSubject.events[0].subject}}</div>
               </div>
             </div>
@@ -178,7 +185,7 @@
         </div>
 
         <div *ngIf="combinableEvents.length === 0">
-         <b>Es wurden keine Veranstaltungen mit ähnlichen Titeln gefunden.</b>
+          <b>Es wurden keine Veranstaltungen mit ähnlichen Titeln gefunden.</b>
         </div>
       </div>
 
@@ -260,17 +267,23 @@
           <div *ngIf="$eventService.getAllEventsTeamsCheckedCount(eventsWithEqualSubjectArray) > 0">
             <h4>Teilnehmerlisten:</h4>
             <div *ngFor="let eventsWithEqualSubject of eventsWithEqualSubjectArray">
-              <div class="row" *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0">
-                <div class="col-7">
-                  {{eventsWithEqualSubject.events[0].subject}}
-                </div>
-                <div class="col-1">
-                  <div *ngIf="eventsWithEqualSubject.attendees">
-                    {{eventsWithEqualSubject.attendees.length}}
+              <div *ngIf="$eventService.getTeamsCheckedSubEventCount(eventsWithEqualSubject) > 0">
+                <h6>{{eventsWithEqualSubject.events[0].subject}}</h6>
+                <div class="form-inline">
+                  <div class="col-12 form-group">
+                    <label class="col-ml-3 col-form-label" for="url">Link einfügen (optional): </label>
+                    <input matInput type="url" placeholder=" z.B. www.hsw-elearning.de" class="form-control col-9" name="url"
+                      id="url" [(ngModel)]="eventsWithEqualSubject.customUrl" />
                   </div>
                 </div>
-                <div class="col-4 form-group">
-                  <input type="file" id="file" (change)="handleFileInput(eventsWithEqualSubject, $event)">
+                <div class="form-inline">
+                  <div class="col-12 form-group">
+                    <label class="col-ml-3 col-form-label" for="file">Teilnehmerliste (CSV):</label> <input type="file"
+                      class="form-control col-6" name="file" id="file"
+                      (change)="handleFileInput(eventsWithEqualSubject, $event)">
+                    <span class="col-3" *ngIf="eventsWithEqualSubject.attendees">{{eventsWithEqualSubject.attendees.length}}
+                      Teilnehmer</span>
+                  </div>
                 </div>
                 <hr>
               </div>

@@ -174,6 +174,7 @@ export class HomeComponent implements OnInit {
     this.eventsWithEqualSubjectArray = undefined;
     this.allChecked = false;
     this.allTeamsChecked = false;
+    this.alertsService.removeAll();
   }
 
   async signIn(): Promise<void> {
