@@ -288,7 +288,7 @@ export class EventService {
     return renamedEvents;
   }
 
-  findCombinableEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): Promise<CombinableEvents[]> {
+  findCombinableEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): CombinableEvents[] {
     const combinableEvents: CombinableEvents[] = [];
     for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
       let found = false;
