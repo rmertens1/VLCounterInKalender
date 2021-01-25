@@ -23,6 +23,7 @@ export class EventService {
   private regexHSWEventSubjectMBARegex: RegExp = /.*\d{2}\/\d{2} MBA\d{2}.*/gi;
   private regexTeams: RegExp = /.*TEAMS.*/gi;
   public nameRegex: RegExp = /(.*)\d{2}\/\d{2}/gi;
+  public nameRegex2: RegExp = /(.*) - JG/gi;
 
   public async getEvents(startDate: Date, endDate: Date, removeSingleEvents = true): Promise<EventsWithEqualSubject[]> {
     const eventsWithEqualSubjectArray = await this.graphService.getEvents(startDate, endDate)
@@ -109,17 +110,17 @@ export class EventService {
           teamsEvent.onlineMeetingProvider = 'teamsForBusiness';
           teamsEvent.categories = eventsWithEqualSubject.categories;
           teamsEvent.attendees = eventsWithEqualSubject.attendees;
-          if(!teamsEvent.body || !teamsEvent.body.content){
+          if (!teamsEvent.body || !teamsEvent.body.content) {
             teamsEvent.body = new ItemBody();
             teamsEvent.body.contentType = 'html';
             teamsEvent.body.content = '';
           }
-          if(eventsWithEqualSubject.customUrl){
+          if (eventsWithEqualSubject.customUrl) {
             let url: URL;
             try {
               url = new URL(eventsWithEqualSubject.customUrl);
             } catch (error) {
-              this.alertsService.add('Bitte fügen Sie nur valide URLs inkl. https:// ein',`${eventsWithEqualSubject.customUrl} ist keine valide URL.`,AlertType.danger);
+              this.alertsService.add('Bitte fügen Sie nur valide URLs inkl. https:// ein', `${eventsWithEqualSubject.customUrl} ist keine valide URL.`, AlertType.danger);
               throw new Error("");
             }
             teamsEvent.body.content += `Der Dozent hat eine URL für diese Veranstaltung hinzugefügt: <br> <a href="${url.href}">${url.hostname}</a>`;
@@ -301,7 +302,15 @@ export class EventService {
 
       if (!found) {
         const comb = new CombinableEvents();
-        comb.shortSubject = eventsWithEqualSubject.events[0].subject.match(this.nameRegex)[0];
+        let match = eventsWithEqualSubject.events[0].subject.match(this.nameRegex);
+        if (match) {
+          comb.shortSubject = eventsWithEqualSubject.events[0].subject.match(this.nameRegex)[0];
+        } else {
+          match = eventsWithEqualSubject.events[0].subject.match(this.nameRegex2);
+          if (match) {
+            comb.shortSubject = eventsWithEqualSubject.events[0].subject.match(this.nameRegex2)[0];
+          }
+        }
         comb.eventsWithEqualSubjectArray.push(eventsWithEqualSubject);
         combinableEvents.push(comb);
       }
@@ -321,10 +330,10 @@ export class EventService {
       let count = 0;
       if (combinableEvent.combine) {
         for (const eventsWithEqualSubject of combinableEvent.eventsWithEqualSubjectArray) {
-          if(eventsWithEqualSubject.combine){
+          if (eventsWithEqualSubject.combine) {
             count++;
 
-            if (!combinableEvent.customName){
+            if (!combinableEvent.customName) {
               combinableEvent.shortSubject = eventsWithEqualSubject.events[0].subject;
               combinableEvent.customName = true;
             }
@@ -336,7 +345,7 @@ export class EventService {
           }
         }
       }
-      if(count > 0){
+      if (count > 0) {
         this.alertsService.add(
           `Veranstaltung ${combinableEvent.shortSubject} erfolgreich zusammengefügt.`,
           `${count} Veranstaltungen wurden erfolgreich kombiniert und an Outlook übertragen. Sie können diese bald in Ihrem Kalender nachschlagen. Je nach Anzahl der Termine kann dies einige Minuten dauern.`,
