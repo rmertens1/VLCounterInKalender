@@ -19,6 +19,7 @@ export class EventService {
   private eventCounterRemovalRegex: RegExp = /(\(\d*\/\d*\))*/gi;
   private regexHSWEventSubjectFirstSemester: RegExp = /.*\d{2}\/\d{2}.*/;
   private regexHSWEventSubjectDualRegex: RegExp = /.*\d{2}\/\d{2} - \d{1}.*/gi;
+  private regexHSWEventSubjectDualWithGroup: RegExp = /.* - JG \d* - G.*/gi;
   private regexHSWEventSubjectMBARegex: RegExp = /.*\d{2}\/\d{2} MBA\d{2}.*/gi;
   private regexTeams: RegExp = /.*TEAMS.*/gi;
   public nameRegex: RegExp = /(.*)\d{2}\/\d{2}/gi;
@@ -195,7 +196,8 @@ export class EventService {
       // Comparison to check if the subject of an event matches the pattern the HSW uses
       if ((event.subject.match(this.regexHSWEventSubjectDualRegex)) ||
         (event.subject.match(this.regexHSWEventSubjectMBARegex)) ||
-        (event.subject.match(this.regexHSWEventSubjectFirstSemester))) {
+        (event.subject.match(this.regexHSWEventSubjectFirstSemester)) ||
+        (event.subject.match(this.regexHSWEventSubjectDualWithGroup))) {
         newEvents.push(event);
       }
     }
@@ -286,7 +288,7 @@ export class EventService {
     return renamedEvents;
   }
 
-  findCombinableEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): CombinableEvents[] {
+  findCombinableEvents(eventsWithEqualSubjectArray: EventsWithEqualSubject[]): Promise<CombinableEvents[]> {
     const combinableEvents: CombinableEvents[] = [];
     for (const eventsWithEqualSubject of eventsWithEqualSubjectArray) {
       let found = false;
