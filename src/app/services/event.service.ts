@@ -120,10 +120,14 @@ export class EventService {
             try {
               url = new URL(eventsWithEqualSubject.customUrl);
             } catch (error) {
-              this.alertsService.add('Bitte fügen Sie nur valide URLs inkl. https:// ein', `${eventsWithEqualSubject.customUrl} ist keine valide URL.`, AlertType.danger);
-              throw new Error("");
+              try {
+                url = new URL("https://" + eventsWithEqualSubject.customUrl);
+              } catch (error) {
+                this.alertsService.add('Bitte fügen Sie nur valide URLs inkl. https:// ein', `${eventsWithEqualSubject.customUrl} ist keine valide URL.`, AlertType.danger);
+                throw new Error("");
+              }
             }
-            teamsEvent.body.content += `Der Dozent hat eine URL für diese Veranstaltung hinzugefügt: <br> <a href="${url.href}">${url.hostname}</a>`;
+            teamsEvent.body.content += `Der Dozent hat eine URL für diese Veranstaltung hinzugefügt: <br> <a href="${url.href}">${url.href}</a>`;
           }
 
           this.graphService.createEvent(teamsEvent);
