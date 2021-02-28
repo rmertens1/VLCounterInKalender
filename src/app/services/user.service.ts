@@ -11,6 +11,12 @@ export class UserService {
     let namesRegex: RegExp = /(?<nachname>.*), (?<vorname>.*)/;
     let emails: string[] = new Array();
     for (const name of names) {
+      let fixedEmail = this.differentEmail(name);
+      if (fixedEmail.length > 0) {
+        emails.concat(fixedEmail);
+        continue;
+      }
+
       let test = name.match(namesRegex);
       let nachname = this.replSpecialChars(test.groups.nachname);
       let vorname = this.replSpecialChars(test.groups.vorname);
@@ -31,4 +37,14 @@ export class UserService {
       .replace('ž', 'z')
       .replace('ć', 'c');
   }
+
+  differentEmail(name: string): string {
+    switch (name) {
+      case 'Habitz, Paul Philip':
+        return 'paul.habitz@hsw-stud.de';
+      default:
+        break;
+    }
+  }
+
 }
