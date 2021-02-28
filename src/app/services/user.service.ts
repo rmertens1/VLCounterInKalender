@@ -43,7 +43,7 @@ export class UserService {
       case 'Habitz, Paul Philip':
         return 'paul.habitz@hsw-stud.de';
       default:
-        break;
+        return '';
     }
   }
 
