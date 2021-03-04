@@ -35,7 +35,9 @@ export class UserService {
       .replace('ß', 'ss')
       .replace('é', 'e')
       .replace('ž', 'z')
-      .replace('ć', 'c');
+      .replace('ć', 'c')
+      .replace('í','i')
+      .replace('ì','i');
   }
 
   differentEmail(name: string): string {
